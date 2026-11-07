@@ -1,0 +1,13 @@
+{
+  "name": "@ssr-examples/demo-data",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "The data every example renders (see CONTRACT.md).",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.js"
+    }
+  }
+}

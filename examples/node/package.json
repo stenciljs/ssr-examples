@@ -1,0 +1,13 @@
+{
+  "name": "@ssr-examples/example-node",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@ssr-examples/components": "workspace:*",
+    "@ssr-examples/ssr-props": "workspace:*",
+    "@ssr-examples/demo-data": "workspace:*"
+  }
+}

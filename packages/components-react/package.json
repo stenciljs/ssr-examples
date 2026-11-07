@@ -1,0 +1,37 @@
+{
+  "name": "@ssr-examples/components-react",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p ."
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./next": {
+      "types": "./dist/components.server.d.ts",
+      "import": "./dist/components.server.js"
+    }
+  },
+  "files": [
+    "dist/"
+  ],
+  "dependencies": {
+    "@ssr-examples/components": "workspace:*",
+    "@stencil/react-output-target": "1.8.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "react": "^19",
+    "react-dom": "^19"
+  }
+}

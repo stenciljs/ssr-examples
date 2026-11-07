@@ -1,0 +1,21 @@
+{
+  "name": "stencil-ssr-examples",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@9.14.0",
+  "scripts": {
+    "build": "pnpm --filter './packages/**' build",
+    "test": "pnpm --filter @ssr-examples/conformance test",
+    "link:core": "node scripts/link-core.mjs",
+    "unlink:core": "node scripts/link-core.mjs --unlink",
+    "test:all": "scripts/test-all.sh",
+    "link:react": "node scripts/link-core.mjs --react",
+    "unlink:react": "node scripts/link-core.mjs --react --unlink"
+  },
+  "pnpm": {
+    "overrides": {
+      "@stencil/core": "link:/Users/John.Jenkins/projects/stenciljs/packages/core",
+      "@stencil/react-output-target": "file:node_modules/.local-packs/stencil-react-output-target-1.7.0-c1089d793c.tgz"
+    }
+  }
+}

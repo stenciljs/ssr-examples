@@ -1,0 +1,64 @@
+{
+  "name": "@ssr-examples/components",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "stencil build",
+    "dev": "stencil build --watch"
+  },
+  "devDependencies": {
+    "@stencil/core": "5.0.0-beta.35",
+    "@stencil/react-output-target": "1.8.0"
+  },
+  "files": [
+    "dist/"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/types/loader.d.ts",
+      "import": "./dist/loader-bundle/esm/loader.js"
+    },
+    "./loader": {
+      "types": "./dist/types/loader.d.ts",
+      "import": "./dist/loader-bundle/esm/loader.js"
+    },
+    "./standalone": {
+      "types": "./dist/standalone/index.d.ts",
+      "import": "./dist/standalone/index.js"
+    },
+    "./demo-badge": {
+      "types": "./dist/standalone/demo-badge.d.ts",
+      "import": "./dist/standalone/demo-badge.js"
+    },
+    "./demo-card": {
+      "types": "./dist/standalone/demo-card.d.ts",
+      "import": "./dist/standalone/demo-card.js"
+    },
+    "./demo-counter": {
+      "types": "./dist/standalone/demo-counter.d.ts",
+      "import": "./dist/standalone/demo-counter.js"
+    },
+    "./demo-notice": {
+      "types": "./dist/standalone/demo-notice.d.ts",
+      "import": "./dist/standalone/demo-notice.js"
+    },
+    "./demo-stats": {
+      "types": "./dist/standalone/demo-stats.d.ts",
+      "import": "./dist/standalone/demo-stats.js"
+    },
+    "./demo-task-list": {
+      "types": "./dist/standalone/demo-task-list.d.ts",
+      "import": "./dist/standalone/demo-task-list.js"
+    },
+    "./components": {
+      "types": "./dist/types/components.d.ts"
+    },
+    "./ssr": {
+      "types": "./dist/ssr/index.d.ts",
+      "import": "./dist/ssr/index.js"
+    },
+    "./assets/*": "./dist/assets/*",
+    "./package.json": "./package.json"
+  }
+}

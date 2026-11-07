@@ -1,0 +1,19 @@
+{
+  "name": "@ssr-examples/example-nuxt",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev --port 3002",
+    "start": "PORT=3002 node .output/server/index.mjs",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@ssr-examples/components": "workspace:*",
+    "@ssr-examples/demo-data": "workspace:*",
+    "@ssr-examples/ssr-props": "workspace:*",
+    "nuxt": "^4.6.4",
+    "vue": "^3.5.45",
+    "vue-router": "^5.4.0"
+  }
+}

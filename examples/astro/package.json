@@ -1,0 +1,17 @@
+{
+  "name": "@ssr-examples/example-astro",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev --port 3003",
+    "build": "astro build",
+    "start": "HOST=0.0.0.0 PORT=3003 node dist/server/entry.mjs"
+  },
+  "dependencies": {
+    "@astrojs/node": "^11.1.11",
+    "@ssr-examples/components": "workspace:*",
+    "@ssr-examples/demo-data": "workspace:*",
+    "@ssr-examples/ssr-props": "workspace:*",
+    "astro": "^7.4.7"
+  }
+}

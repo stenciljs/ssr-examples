@@ -1,0 +1,32 @@
+:host {
+  display: block;
+}
+figure {
+  margin: 0;
+}
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+li {
+  display: grid;
+  grid-template-columns: 6rem 1fr 3rem;
+  align-items: center;
+  gap: 0.5rem;
+}
+.bar {
+  display: block;
+  height: 0.75rem;
+  border-radius: 3px;
+  background: #5851ff;
+}
+.value {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.empty {
+  color: #b91c1c;
+}
