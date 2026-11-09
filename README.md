@@ -12,7 +12,9 @@ page with the same component library.
 | SvelteKit | [`examples/sveltekit`](examples/sveltekit) | the `handle` hook |
 | SolidStart | [`examples/solid-start`](examples/solid-start) | middleware |
 | React Router (ex-Remix) | [`examples/react-router`](examples/react-router) | `entry.server.tsx` |
+| TanStack Start | [`examples/tanstack-start`](examples/tanstack-start) | a custom server entry |
 | Angular | [`examples/angular`](examples/angular) | `server.ts` |
+| Eleventy | [`examples/eleventy`](examples/eleventy) | a transform, at build time |
 | No framework | [`examples/node`](examples/node) | a plain Node server |
 
 They need `@stencil/core` 5.0.0-beta.36 or later.
@@ -28,7 +30,8 @@ markup.
 | [![Next.js](docs/screenshots/next.png)](examples/next)<br>Next.js | [![Nuxt](docs/screenshots/nuxt.png)](examples/nuxt)<br>Nuxt |
 | [![Astro](docs/screenshots/astro.png)](examples/astro)<br>Astro | [![SvelteKit](docs/screenshots/sveltekit.png)](examples/sveltekit)<br>SvelteKit |
 | [![SolidStart](docs/screenshots/solid-start.png)](examples/solid-start)<br>SolidStart | [![React Router](docs/screenshots/react-router.png)](examples/react-router)<br>React Router |
-| [![Angular](docs/screenshots/angular.png)](examples/angular)<br>Angular | [![No framework](docs/screenshots/node.png)](examples/node)<br>No framework |
+| [![TanStack Start](docs/screenshots/tanstack-start.png)](examples/tanstack-start)<br>TanStack Start | [![Angular](docs/screenshots/angular.png)](examples/angular)<br>Angular |
+| [![Eleventy](docs/screenshots/eleventy.png)](examples/eleventy)<br>Eleventy | [![No framework](docs/screenshots/node.png)](examples/node)<br>No framework |
 
 ## Using a Stencil library in your framework
 
@@ -111,9 +114,9 @@ is type-checked. Each app imports its file once (as these examples do), so add t
 frameworks as optional `peerDependencies` of the library. Otherwise the types can't resolve
 them and quietly check nothing.
 
-**Slots:** prefer `shadow` encapsulation for components whose slots hold framework-reactive
-content. A `scoped` or unencapsulated component's server-rendered light DOM holds its own markup
-next to the slotted content, which some frameworks can't hydrate around (Svelte 5, for one).
+**Slots, if your users use Svelte:** Svelte 5 can't hydrate slotted content that can change in a
+`scoped` or unencapsulated component, so use `shadow` encapsulation for components that take
+it. See [`examples/sveltekit`](examples/sveltekit).
 
 The component library these examples use is [`packages/components`](packages/components).
 

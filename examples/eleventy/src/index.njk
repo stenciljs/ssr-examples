@@ -1,0 +1,36 @@
+---
+framework: Eleventy
+badge: SSR
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>{{ framework }} · Stencil SSR</title>
+    <style>
+      body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 2rem auto; }
+      main > * { margin-bottom: 1.5rem; }
+      .demo-notice { display: block; padding: .75rem 1rem; border-radius: 6px; background: #eef2ff; }
+    </style>
+    <script type="module" src="/demo-components/demo-components.esm.js"></script>
+    <script type="module" src="/client.js"></script>
+  </head>
+  <body>
+    <main>
+      <h1>{{ framework }} + Stencil SSR</h1>
+      <demo-notice kind="info">Rendered by {{ framework }}.</demo-notice>
+      <demo-card heading="Server-rendered card" variant="highlight">
+        <span slot="icon">★</span>
+        <p>This card was rendered on the server as Declarative Shadow DOM.</p>
+        <demo-badge tone="success">{{ badge }}</demo-badge>
+        <span slot="footer">Footer slot</span>
+      </demo-card>
+      <demo-counter start="5" step="2"></demo-counter>
+      <p id="last-count">Last count: none</p>
+      <demo-task-list tasks="{{ tasks | ssrProp }}"></demo-task-list>
+      <demo-stats stats="{{ stats | ssrProp }}"></demo-stats>
+      <button id="add-stat" type="button">Add stat</button>
+      <button id="update-badge" type="button">Update badge</button>
+    </main>
+  </body>
+</html>

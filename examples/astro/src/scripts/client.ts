@@ -13,3 +13,6 @@ document.querySelector('demo-counter')!.addEventListener('countChanged', (e) => 
 document.querySelector('#add-stat')!.addEventListener('click', () => {
   stats.stats = [...(stats.stats ?? []), extraStat];
 });
+document.querySelector('#update-badge')!.addEventListener('click', () => {
+  document.querySelector('demo-badge')!.textContent = 'Updated';
+});

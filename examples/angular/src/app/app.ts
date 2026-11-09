@@ -22,6 +22,7 @@ import { ssrProp } from '@ssr-examples/components/ssr-prop';
       <demo-task-list [attr.tasks]="ssrAttr(tasks)" [tasks]="tasks"></demo-task-list>
       <demo-stats [attr.stats]="ssrAttr(stats())" [stats]="stats()"></demo-stats>
       <button id="add-stat" type="button" (click)="addStat()">Add stat</button>
+      <button id="update-badge" type="button" (click)="badge.set('Updated')">Update badge</button>
     </main>
   `,
 })

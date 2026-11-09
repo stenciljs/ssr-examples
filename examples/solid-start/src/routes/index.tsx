@@ -4,7 +4,7 @@ import { ssrProp } from '@ssr-examples/components/ssr-prop';
 
 export default function Home() {
   const [framework] = createSignal('SolidStart');
-  const [badge] = createSignal('SSR');
+  const [badge, setBadge] = createSignal('SSR');
   const [stats, setStats] = createSignal(initialStats);
   const [lastCount, setLastCount] = createSignal<number | null>(null);
 
@@ -25,6 +25,9 @@ export default function Home() {
       <demo-stats stats={ssrProp(stats())} />
       <button id="add-stat" type="button" onClick={() => setStats([...stats(), extraStat])}>
         Add stat
+      </button>
+      <button id="update-badge" type="button" onClick={() => setBadge('Updated')}>
+        Update badge
       </button>
     </main>
   );

@@ -71,6 +71,7 @@ like any element ([`src/routes/+page.svelte`](src/routes/+page.svelte)):
   In the browser it returns the value as it is. See
   [Passing objects and arrays](../../README.md#passing-objects-and-arrays).
 - **Events:** `oncountChanged` listens for `countChanged`, exactly as written after `on`.
-- **Reactive slotted text:** Svelte 5 can't hydrate reactive text slotted into `scoped` or
-  unencapsulated components, and re-renders the page. Use `shadow` encapsulation for components
-  that take reactive slot content.
+- **Slotted content that can change:** Svelte 5 can't hydrate it in `scoped` or unencapsulated
+  components, and re-renders the page. That's why this page leaves out the contract's "Update badge"
+  button: with it, nothing on the page hydrates in place. Its test is marked as a known failure. Use
+  `shadow` encapsulation for components that take such content.

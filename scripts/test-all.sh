@@ -12,6 +12,7 @@ port_for() {
   case "$1" in
     node) echo 3000 ;; next) echo 3001 ;; nuxt) echo 3002 ;; astro) echo 3003 ;; sveltekit) echo 3004 ;;
     solid-start) echo 3005 ;; react-router) echo 3006 ;; angular) echo 3007 ;;
+    tanstack-start) echo 3008 ;; eleventy) echo 3009 ;;
     *) echo "no port for $1 - add it to CONTRACT.md and here" >&2; return 1 ;;
   esac
 }
@@ -41,7 +42,7 @@ for name in "${examples[@]}"; do
   for _ in $(seq 1 120); do curl -sf "http://localhost:$port/health" >/dev/null && break; sleep 1; done
   # warm up dev servers, whose first request compiles the page
   curl -s -o /dev/null "http://localhost:$port/"
-  if ! (cd tests/conformance && BASE_URL="http://localhost:$port" npx playwright test); then
+  if ! (cd tests/conformance && EXAMPLE="$name" BASE_URL="http://localhost:$port" npx playwright test); then
     failed+=("$name")
   fi
   stop_port "$port"

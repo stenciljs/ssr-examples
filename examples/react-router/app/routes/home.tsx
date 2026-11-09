@@ -4,7 +4,7 @@ import { ssrProp } from '@ssr-examples/components/ssr-prop';
 
 export default function Home() {
   const framework = 'React Router';
-  const badge = 'SSR';
+  const [badge, setBadge] = useState('SSR');
   const [stats, setStats] = useState(initialStats);
   const [lastCount, setLastCount] = useState<number | null>(null);
 
@@ -37,6 +37,9 @@ export default function Home() {
       <demo-stats suppressHydrationWarning stats={ssrProp(stats)} />
       <button id="add-stat" type="button" onClick={() => setStats((s) => [...s, extraStat])}>
         Add stat
+      </button>
+      <button id="update-badge" type="button" onClick={() => setBadge('Updated')}>
+        Update badge
       </button>
     </main>
   );

@@ -29,6 +29,8 @@ const PORTS = {
   'solid-start': 3005,
   'react-router': 3006,
   angular: 3007,
+  'tanstack-start': 3008,
+  eleventy: 3009,
 };
 const names = process.argv.length > 2 ? process.argv.slice(2) : Object.keys(PORTS);
 

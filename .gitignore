@@ -18,6 +18,7 @@ packages/components-react/src/components*.ts
 .vinxi/
 .react-router/
 build/
+_site/
 
 # playwright
 test-results/

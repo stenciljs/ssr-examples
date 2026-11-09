@@ -1,4 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
+import { expectKnownFailures } from './known-failures';
+
+expectKnownFailures();
 
 const TAGS = ['demo-notice', 'demo-card', 'demo-badge', 'demo-counter', 'demo-task-list', 'demo-stats'];
 
@@ -122,6 +125,15 @@ test.describe('JavaScript enabled', () => {
     await page.locator('demo-counter button').click();
     await expect(page.locator('demo-counter .value')).toHaveText('7');
     await expect(page.locator('#last-count')).toHaveText('Last count: 7');
+  });
+
+  test("framework updates its content in a scoped component's slot", async ({ page }) => {
+    // the framework must hydrate the slotted text in place: a re-render would also show the update
+    expect(await replacedHosts(page)).not.toContain('demo-badge');
+    await expect(page.locator('#update-badge')).toBeVisible();
+    await page.locator('#update-badge').click();
+    await expect(page.locator('demo-card demo-badge .badge')).toHaveText('Updated');
+    await expect(page.locator('demo-card demo-badge .badge')).toHaveCount(1);
   });
 
   test('framework still owns the complex prop', async ({ page }) => {

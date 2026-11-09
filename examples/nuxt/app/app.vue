@@ -25,5 +25,6 @@ const addStat = () => (stats.value = [...stats.value, extraStat]);
     <demo-task-list :tasks="ssrProp(tasks)" />
     <demo-stats :stats="ssrProp(stats)" />
     <button id="add-stat" type="button" @click="addStat">Add stat</button>
+    <button id="update-badge" type="button" @click="badge = 'Updated'">Update badge</button>
   </main>
 </template>

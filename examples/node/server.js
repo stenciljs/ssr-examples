@@ -45,6 +45,7 @@ const page = () => `<!doctype html>
       <demo-task-list tasks="${attr(ssrProp(tasks))}"></demo-task-list>
       <demo-stats stats="${attr(ssrProp(stats))}"></demo-stats>
       <button id="add-stat" type="button">Add stat</button>
+      <button id="update-badge" type="button">Update badge</button>
     </main>
   </body>
 </html>`;
@@ -59,6 +60,9 @@ document.querySelector('demo-counter').addEventListener('countChanged', (e) => {
 });
 document.querySelector('#add-stat').addEventListener('click', () => {
   stats.stats = [...stats.stats, { label: 'Delta', value: 9 }];
+});
+document.querySelector('#update-badge').addEventListener('click', () => {
+  document.querySelector('demo-badge').textContent = 'Updated';
 });
 `;
 

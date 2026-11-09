@@ -8,6 +8,10 @@ you add an example, implement everything below, then run:
 BASE_URL=http://localhost:<port> pnpm test
 ```
 
+Tests an example is known to fail are listed, with the reason, in
+[`tests/conformance/e2e/known-failures.ts`](tests/conformance/e2e/known-failures.ts).
+`scripts/test-all.sh` applies them.
+
 ## Inputs
 
 All examples depend on the workspace packages:
@@ -58,6 +62,8 @@ For most frameworks, a response hook or middleware passes the whole HTML documen
   <demo-stats stats="{stats}"></demo-stats>
   <!-- framework: on click, append { label: 'Delta', value: 9 } to stats -->
   <button id="add-stat" type="button">Add stat</button>
+  <!-- framework: on click, set `{badge}` to 'Updated' -->
+  <button id="update-badge" type="button">Update badge</button>
 </main>
 ```
 
@@ -65,7 +71,7 @@ For most frameworks, a response hook or middleware passes the whole HTML documen
 Svelte's turn static subtrees into plain HTML strings that hydrate without being checked, which
 hides exactly the light DOM changes this page is meant to catch.
 
-`demo-stats`, the `#last-count` text and the `#add-stat` button are the framework's own state.
+`demo-stats`, the badge text, the `#last-count` text and the buttons are the framework's own state.
 They're there to check that the **framework** still hydrates and owns its part of the page,
 not only that the Stencil components do.
 
@@ -100,3 +106,5 @@ const stats = [
 | `solid-start` | 3005 |
 | `react-router` | 3006 |
 | `angular` | 3007 |
+| `tanstack-start` | 3008 |
+| `eleventy` | 3009 |

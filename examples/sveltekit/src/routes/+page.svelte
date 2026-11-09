@@ -28,4 +28,12 @@
 	<demo-task-list tasks={ssrProp(tasks)}></demo-task-list>
 	<demo-stats stats={ssrProp(stats)}></demo-stats>
 	<button id="add-stat" type="button" onclick={addStat}>Add stat</button>
+	<!--
+		Left out: this button makes Svelte break. Once anything can change `badge`, Svelte hydrates
+		the badge's text by walking <demo-badge>'s real children, finds the scoped component's own
+		markup there instead, and re-renders the whole page. See "Slotted content that can change"
+		in this example's README.
+
+		<button id="update-badge" type="button" onclick={() => (badge = 'Updated')}>Update badge</button>
+	-->
 </main>
