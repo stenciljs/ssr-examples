@@ -3,6 +3,10 @@
 Server-rendering Stencil components from a plain Node server: the starting point for Express,
 Hono, Fastify or any other server that builds HTML itself.
 
+<img src="../../docs/screenshots/node.png" alt="The page, server-rendered by a plain Node server" width="380">
+
+<sub>The server's HTML, with JavaScript off.</sub>
+
 ```sh
 pnpm install && pnpm build   # at the repo root, once
 pnpm dev                     # in this folder: http://localhost:3000

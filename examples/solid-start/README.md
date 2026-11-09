@@ -2,6 +2,10 @@
 
 Server-rendering Stencil components in a SolidStart app.
 
+<img src="../../docs/screenshots/solid-start.png" alt="The page, server-rendered by SolidStart" width="380">
+
+<sub>The server's HTML, with JavaScript off.</sub>
+
 ```sh
 pnpm install && pnpm build   # at the repo root, once
 pnpm dev                     # in this folder: http://localhost:3005

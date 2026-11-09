@@ -2,6 +2,10 @@
 
 Server-rendering Stencil components in a Next.js (App Router) app.
 
+<img src="../../docs/screenshots/next.png" alt="The page, server-rendered by Next.js" width="380">
+
+<sub>The server's HTML, with JavaScript off.</sub>
+
 Next.js renders components one at a time, so there's no finished page to pass through
 `renderToString()`. Instead, the [React output target](https://stenciljs.com/docs/react#server-side-rendering)
 generates React wrappers that render their Stencil component on the server.

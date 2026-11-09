@@ -2,6 +2,10 @@
 
 Server-rendering Stencil components in a React Router (framework mode) app.
 
+<img src="../../docs/screenshots/react-router.png" alt="The page, server-rendered by React Router" width="380">
+
+<sub>The server's HTML, with JavaScript off.</sub>
+
 ```sh
 pnpm install && pnpm build   # at the repo root, once
 pnpm dev                     # in this folder: http://localhost:3006

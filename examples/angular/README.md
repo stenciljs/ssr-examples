@@ -2,6 +2,10 @@
 
 Server-rendering Stencil components in an Angular app with `@angular/ssr`.
 
+<img src="../../docs/screenshots/angular.png" alt="The page, server-rendered by Angular" width="380">
+
+<sub>The server's HTML, with JavaScript off.</sub>
+
 ```sh
 pnpm install && pnpm build   # at the repo root, once
 pnpm dev                     # in this folder: http://localhost:3007

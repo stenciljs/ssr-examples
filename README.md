@@ -17,6 +17,19 @@ page with the same component library.
 
 They need `@stencil/core` 5.0.0-beta.36 or later.
 
+### Screenshots
+
+Taken with JavaScript disabled, so each one is only the HTML the server sent: Declarative Shadow
+DOM, styles and all. With JavaScript on, the framework and the components hydrate that same
+markup.
+
+| | |
+|---|---|
+| [![Next.js](docs/screenshots/next.png)](examples/next)<br>Next.js | [![Nuxt](docs/screenshots/nuxt.png)](examples/nuxt)<br>Nuxt |
+| [![Astro](docs/screenshots/astro.png)](examples/astro)<br>Astro | [![SvelteKit](docs/screenshots/sveltekit.png)](examples/sveltekit)<br>SvelteKit |
+| [![SolidStart](docs/screenshots/solid-start.png)](examples/solid-start)<br>SolidStart | [![React Router](docs/screenshots/react-router.png)](examples/react-router)<br>React Router |
+| [![Angular](docs/screenshots/angular.png)](examples/angular)<br>Angular | [![No framework](docs/screenshots/node.png)](examples/node)<br>No framework |
+
 ## Using a Stencil library in your framework
 
 Three steps, the same in every framework except Next.js:
@@ -107,6 +120,7 @@ pnpm install
 pnpm build                       # the component library and its React wrappers
 scripts/test-all.sh              # build, start and test every example
 DEV=1 scripts/test-all.sh nuxt   # one example, on its dev server
+node scripts/screenshots.mjs     # the README screenshots (build first)
 ```
 
 Every example renders the page in [`CONTRACT.md`](CONTRACT.md), and
