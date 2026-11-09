@@ -60,7 +60,7 @@ re-renders the whole document.
 
 ## 3. Use the components
 
-Use them as plain custom elements. Add JSX types for the tags
+Use them as plain custom elements. Import the JSX types the library generates for React
 ([`app/custom-elements.d.ts`](app/custom-elements.d.ts)), and put `suppressHydrationWarning` on
 `<html>` ([`app/root.tsx`](app/root.tsx)). Then ([`app/routes/home.tsx`](app/routes/home.tsx)):
 
@@ -74,7 +74,7 @@ const counterRef = useCallback((el: HTMLElement | null) => {
   return () => el.removeEventListener('countChanged', onCountChanged);
 }, []);
 
-<demo-counter suppressHydrationWarning start="5" step="2" ref={counterRef} />
+<demo-counter suppressHydrationWarning start={5} step={2} ref={counterRef} />
 <demo-stats suppressHydrationWarning stats={ssrProp(stats)} />
 ```
 

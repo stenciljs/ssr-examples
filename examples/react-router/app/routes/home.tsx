@@ -30,7 +30,7 @@ export default function Home() {
         <demo-badge suppressHydrationWarning tone="success">{badge}</demo-badge>
         <span slot="footer">Footer slot</span>
       </demo-card>
-      <demo-counter suppressHydrationWarning start="5" step="2" ref={counterRef} />
+      <demo-counter suppressHydrationWarning start={5} step={2} ref={counterRef} />
       {/* one string, so React doesn't split it into two text nodes with a <!-- --> between */}
       <p id="last-count">{`Last count: ${lastCount ?? 'none'}`}</p>
       <demo-task-list suppressHydrationWarning tasks={ssrProp(tasks)} />

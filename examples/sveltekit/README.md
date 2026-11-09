@@ -54,14 +54,15 @@ and re-render the whole page.
 
 ## 3. Use the components
 
-Use them like any element ([`src/routes/+page.svelte`](src/routes/+page.svelte)):
+Import the types the library generates for Svelte ([`src/app.d.ts`](src/app.d.ts)), then use them
+like any element ([`src/routes/+page.svelte`](src/routes/+page.svelte)):
 
 ```svelte
 <script lang="ts">
   import { ssrProp } from '@ssr-examples/components/ssr-prop';
 </script>
 
-<demo-counter start="5" step="2" oncountChanged={(e: CustomEvent<number>) => (lastCount = e.detail)}
+<demo-counter start={5} step={2} oncountChanged={(e: CustomEvent<number>) => (lastCount = e.detail)}
 ></demo-counter>
 <demo-stats stats={ssrProp(stats)}></demo-stats>
 ```

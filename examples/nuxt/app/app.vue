@@ -20,7 +20,7 @@ const addStat = () => (stats.value = [...stats.value, extraStat]);
       <demo-badge tone="success">{{ badge }}</demo-badge>
       <span slot="footer">Footer slot</span>
     </demo-card>
-    <demo-counter start="5" step="2" @countChanged="lastCount = $event.detail" />
+    <demo-counter :start="5" :step="2" @countChanged="lastCount = $event.detail" />
     <p id="last-count">Last count: {{ lastCount ?? 'none' }}</p>
     <demo-task-list :tasks="ssrProp(tasks)" />
     <demo-stats :stats="ssrProp(stats)" />

@@ -105,6 +105,12 @@ The value is written to the attribute during server rendering and read back befo
 component first renders in the browser. For other formats, such as a `Map` or a `Date`, write a
 [`@PropSerialize()` / `@AttrDeserialize()`](https://stenciljs.com/docs/serialization) pair.
 
+**Types for frameworks:** the [types output target](https://www.npmjs.com/package/@stencil/types-output-target)
+generates template types for React, Vue, Svelte, Solid and Astro, so `<my-chart data={...} />`
+is type-checked. Each app imports its file once (as these examples do), so add the
+frameworks as optional `peerDependencies` of the library. Otherwise the types can't resolve
+them and quietly check nothing.
+
 **Slots:** prefer `shadow` encapsulation for components whose slots hold framework-reactive
 content. A `scoped` or unencapsulated component's server-rendered light DOM holds its own markup
 next to the slotted content, which some frameworks can't hydrate around (Svelte 5, for one).
@@ -127,7 +133,3 @@ Every example renders the page in [`CONTRACT.md`](CONTRACT.md), and
 [`tests/conformance`](tests/conformance) checks it: the server HTML, the page with JavaScript off,
 and hydration (no errors or mismatches, nothing replaced or duplicated, and both the components
 and the framework still work).
-
-To try local changes to Stencil, `pnpm link:core` or `pnpm link:react` points the workspace at a
-checkout of `stenciljs` or `output-targets` next to this repo (`pnpm unlink:core`,
-`pnpm unlink:react` to undo). See [`scripts/link-core.mjs`](scripts/link-core.mjs).

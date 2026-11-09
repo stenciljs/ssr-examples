@@ -6,10 +6,11 @@
   "scripts": {
     "build": "pnpm --filter './packages/**' build",
     "test": "pnpm --filter @ssr-examples/conformance test",
-    "link:core": "node scripts/link-core.mjs",
-    "unlink:core": "node scripts/link-core.mjs --unlink",
-    "test:all": "scripts/test-all.sh",
-    "link:react": "node scripts/link-core.mjs --react",
-    "unlink:react": "node scripts/link-core.mjs --react --unlink"
+    "test:all": "scripts/test-all.sh"
+  },
+  "pnpm": {
+    "overrides": {
+      "@stencil/types-output-target": "file:node_modules/.local-packs/stencil-types-output-target-1.0.2-fded523fa0.tgz"
+    }
   }
 }

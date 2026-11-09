@@ -51,14 +51,15 @@ Include it from the page with `<script src="../scripts/client.ts"></script>`.
 
 ## 3. Use the components
 
-Use them like any element ([`src/pages/index.astro`](src/pages/index.astro)):
+Import the types the library generates for Astro ([`src/env.d.ts`](src/env.d.ts)), then use them
+like any element ([`src/pages/index.astro`](src/pages/index.astro)):
 
 ```astro
 ---
 import { ssrProp } from '@ssr-examples/components/ssr-prop';
 ---
 
-<demo-counter start="5" step="2"></demo-counter>
+<demo-counter start={5} step={2}></demo-counter>
 <demo-stats stats={ssrProp(stats)}></demo-stats>
 ```
 

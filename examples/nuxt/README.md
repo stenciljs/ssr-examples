@@ -59,7 +59,9 @@ vue: {
 },
 ```
 
-Then use them like any element ([`app/app.vue`](app/app.vue)):
+Import the types the library generates for Vue
+([`app/custom-elements.d.ts`](app/custom-elements.d.ts)), then use them like any element
+([`app/app.vue`](app/app.vue)):
 
 ```vue
 <script setup lang="ts">
@@ -67,7 +69,7 @@ import { ssrProp } from '@ssr-examples/components/ssr-prop';
 </script>
 
 <template>
-  <demo-counter start="5" step="2" @countChanged="lastCount = $event.detail" />
+  <demo-counter :start="5" :step="2" @countChanged="lastCount = $event.detail" />
   <demo-stats :stats="ssrProp(stats)" />
 </template>
 ```

@@ -5,12 +5,17 @@
   "scripts": {
     "dev": "astro dev --port 3003",
     "build": "astro build",
-    "start": "HOST=0.0.0.0 PORT=3003 node dist/server/entry.mjs"
+    "start": "HOST=0.0.0.0 PORT=3003 node dist/server/entry.mjs",
+    "check": "astro check"
   },
   "dependencies": {
     "@astrojs/node": "^11.1.11",
     "@ssr-examples/components": "workspace:*",
     "@ssr-examples/demo-data": "workspace:*",
     "astro": "^7.4.7"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "typescript": "^5.9.3"
   }
 }

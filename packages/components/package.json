@@ -9,7 +9,12 @@
   },
   "devDependencies": {
     "@stencil/core": "5.0.0-beta.36",
-    "@stencil/react-output-target": "1.8.1"
+    "@stencil/react-output-target": "1.8.1",
+    "@stencil/types-output-target": "1.0.2",
+    "@types/react": "^19.2.18",
+    "solid-js": "^1.9.18",
+    "svelte": "^5.57.2",
+    "vue": "^3.5.45"
   },
   "files": [
     "dist/"
@@ -63,6 +68,41 @@
     "./ssr-prop": {
       "types": "./dist/ssr/ssr-prop.d.ts",
       "import": "./dist/ssr/ssr-prop.js"
+    },
+    "./react-native-types": {
+      "types": "./dist/types/react-native-types.d.ts"
+    },
+    "./vue-native-types": {
+      "types": "./dist/types/vue-native-types.d.ts"
+    },
+    "./svelte-native-types": {
+      "types": "./dist/types/svelte-native-types.d.ts"
+    },
+    "./solid-native-types": {
+      "types": "./dist/types/solid-native-types.d.ts"
+    },
+    "./astro-native-types": {
+      "types": "./dist/types/astro-native-types.d.ts"
+    }
+  },
+  "peerDependencies": {
+    "@types/react": ">=19",
+    "solid-js": ">=1",
+    "svelte": ">=5",
+    "vue": ">=3"
+  },
+  "peerDependenciesMeta": {
+    "@types/react": {
+      "optional": true
+    },
+    "solid-js": {
+      "optional": true
+    },
+    "svelte": {
+      "optional": true
+    },
+    "vue": {
+      "optional": true
     }
   }
 }

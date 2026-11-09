@@ -22,7 +22,7 @@
 		<demo-badge tone="success">{badge}</demo-badge>
 		<span slot="footer">Footer slot</span>
 	</demo-card>
-	<demo-counter start="5" step="2" oncountChanged={(e: CustomEvent<number>) => (lastCount = e.detail)}
+	<demo-counter start={5} step={2} oncountChanged={(e: CustomEvent<number>) => (lastCount = e.detail)}
 	></demo-counter>
 	<p id="last-count">Last count: {lastCount ?? 'none'}</p>
 	<demo-task-list tasks={ssrProp(tasks)}></demo-task-list>

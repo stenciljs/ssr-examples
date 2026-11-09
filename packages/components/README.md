@@ -9,8 +9,11 @@ library needs for server rendering in frameworks:
 | `standalone` | one module per component, which the React wrappers import |
 | `ssr` | `./ssr`: `renderToString()`, and `./ssr-prop`: `ssrProp()` for templates |
 | React output target | the React wrappers, with server versions for Next.js |
+| types output target | `./react-native-types`, `./vue-native-types`, `./svelte-native-types`, `./solid-native-types`, `./astro-native-types`: template types for the plain elements |
 
-`generateExportMaps: true` writes those entries into `package.json`.
+`generateExportMaps: true` writes the Stencil entries into `package.json`. The types entries are
+written by hand, and the frameworks are optional `peerDependencies`, so the types can resolve
+them.
 
 ## The components
 

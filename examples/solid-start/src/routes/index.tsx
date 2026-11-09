@@ -18,7 +18,7 @@ export default function Home() {
         <demo-badge tone="success">{badge()}</demo-badge>
         <span slot="footer">Footer slot</span>
       </demo-card>
-      <demo-counter start="5" step="2" on:countChanged={(e) => setLastCount(e.detail)} />
+      <demo-counter start={5} step={2} on:countChanged={(e) => setLastCount(e.detail)} />
       {/* one expression: mixed static text would get `<!--$-->` markers around the dynamic part */}
       <p id="last-count">{`Last count: ${lastCount() ?? 'none'}`}</p>
       <demo-task-list tasks={ssrProp(tasks)} />

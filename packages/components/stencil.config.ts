@@ -1,5 +1,6 @@
 import type { Config } from '@stencil/core';
 import { reactOutputTarget } from '@stencil/react-output-target';
+import { typesOutputTarget } from '@stencil/types-output-target';
 
 export const config: Config = {
   namespace: 'demo-components',
@@ -11,7 +12,14 @@ export const config: Config = {
     { type: 'standalone' },
     // Server: `renderToString()` as `./ssr`, and `ssrProp()` for templates as `./ssr-prop`.
     { type: 'ssr' },
-    { type: 'types' },
+    // JSX / template types for using the components as plain custom elements in each framework
+    typesOutputTarget({
+      reactTypesPath: 'dist/types',
+      vueTypesPath: 'dist/types',
+      svelteTypesPath: 'dist/types',
+      solidTypesPath: 'dist/types',
+      astroTypesPath: 'dist/types',
+    }),
     // React wrappers, with server versions for Next.js (`hydrateModule`).
     reactOutputTarget({
       outDir: '../components-react/src',

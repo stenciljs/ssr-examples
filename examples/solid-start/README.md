@@ -53,13 +53,13 @@ throw the server-rendered page away.
 
 ## 3. Use the components
 
-Declare the `demo-*` elements for JSX ([`src/custom-elements.d.ts`](src/custom-elements.d.ts)),
-then use them like any element ([`src/routes/index.tsx`](src/routes/index.tsx)):
+Import the JSX types the library generates for Solid
+([`src/custom-elements.d.ts`](src/custom-elements.d.ts)), then use them like any element ([`src/routes/index.tsx`](src/routes/index.tsx)):
 
 ```tsx
 import { ssrProp } from '@ssr-examples/components/ssr-prop';
 
-<demo-counter start="5" step="2" on:countChanged={(e) => setLastCount(e.detail)} />
+<demo-counter start={5} step={2} on:countChanged={(e) => setLastCount(e.detail)} />
 <demo-stats stats={ssrProp(stats())} />
 ```
 
