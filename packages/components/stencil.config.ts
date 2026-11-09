@@ -9,7 +9,7 @@ export const config: Config = {
     { type: 'loader-bundle' },
     // Client: one module per component (`./<tag>`). The React wrappers import these.
     { type: 'standalone' },
-    // Server: `renderToString()` and friends, exposed as `./ssr`.
+    // Server: `renderToString()` as `./ssr`, and `ssrProp()` for templates as `./ssr-prop`.
     { type: 'ssr' },
     { type: 'types' },
     // React wrappers, with server versions for Next.js (`hydrateModule`).

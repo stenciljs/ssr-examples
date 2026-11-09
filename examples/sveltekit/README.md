@@ -1,31 +1,21 @@
 # SvelteKit
 
-SvelteKit renders the page, then the `handle` server hook passes the whole document through
-Stencil's `renderToString()`. Svelte then hydrates the page, and the Stencil components hydrate
-alongside it.
+Server-rendering Stencil components in a SvelteKit app.
 
 ```sh
-pnpm build          # at the repo root, once
-pnpm --filter @ssr-examples/example-sveltekit dev       # http://localhost:3004
-# or
-pnpm --filter @ssr-examples/example-sveltekit build && pnpm --filter @ssr-examples/example-sveltekit start
-BASE_URL=http://localhost:3004 pnpm test
+pnpm install && pnpm build   # at the repo root, once
+pnpm dev                     # in this folder: http://localhost:3004
 ```
 
-## The integration
+## 1. Render the components on the server
 
-| File | What it does |
-|---|---|
-| [`src/hooks.server.ts`](src/hooks.server.ts) | `handle` hook: `renderToString()` on every HTML response |
-| [`src/hooks.client.ts`](src/hooks.client.ts) | `init` hook: awaits `defineCustomElements()` before Svelte hydrates |
-| [`src/routes/+page.svelte`](src/routes/+page.svelte) | the page: plain custom elements in a Svelte template |
-| [`src/routes/health/+server.ts`](src/routes/health/+server.ts) | `GET /health` |
-| [`vite.config.ts`](vite.config.ts) | `adapter-node`, so `start` runs a Node server (Kit 3 has no `svelte.config.js`) |
-
-### Server
+The `handle` hook receives the page as a `Response`. Read the whole body, pass it through
+`renderToString()` and return a new `Response` ([`src/hooks.server.ts`](src/hooks.server.ts)):
 
 ```ts
-// src/hooks.server.ts
+import type { Handle } from '@sveltejs/kit/hooks';
+import { renderToString } from '@ssr-examples/components/ssr';
+
 export const handle: Handle = async ({ event, resolve }) => {
   const response = await resolve(event);
   if (!response.headers.get('content-type')?.includes('text/html')) {
@@ -39,74 +29,43 @@ export const handle: Handle = async ({ event, resolve }) => {
 };
 ```
 
-`resolve()` returns a `Response` whose body SvelteKit may stream (for example when a `load`
-function returns promises). `await response.text()` buffers it into the complete document that
-`renderToString()` needs. Don't use `transformPageChunk` for this: its chunks aren't guaranteed to
-be whole documents, or even well-formed HTML. Kit 3 exports the hook types from
-`@sveltejs/kit/hooks`, not `@sveltejs/kit`.
+Don't use `transformPageChunk` for this: its chunks aren't guaranteed to be whole documents.
 
-### Client
+## 2. Define the components before Svelte hydrates
+
+SvelteKit waits for the client `init` hook before hydrating
+([`src/hooks.client.ts`](src/hooks.client.ts)):
 
 ```ts
-// src/hooks.client.ts
+import type { ClientInit } from '@sveltejs/kit/hooks';
+import { defineCustomElements } from '@ssr-examples/components/loader';
+
 export const init: ClientInit = async () => {
   await defineCustomElements();
 };
 ```
 
-**This must finish before Svelte hydrates.** SvelteKit awaits `init` before hydrating, so return
-or `await` the promise: `defineCustomElements()` is `async`. Svelte's hydration is stricter than
-Vue's, and it needs the components defined for two reasons:
+Don't define them later, such as in `onMount`: Svelte would throw or report hydration mismatches
+and re-render the whole page.
 
-- Stencil's server render adds nodes to the light DOM of every component: an `<!--r.N-->` comment
-  in every host, and the rendered template of `scoped` and unencapsulated components
-  (`demo-badge`, `demo-notice`). When a component is defined, its client hydration removes the
-  shadow components' comment. Svelte finds elements by counting siblings, so if the comment is
-  still there it picks the wrong node and throws (`e.getAttribute is not a function`).
-- Svelte sets static text like `<demo-badge>{badge}</demo-badge>` with `el.textContent = ...`
-  during hydration. Once the component is defined, Stencil's patched `textContent` replaces only
-  the slotted text. Before that, it wipes the server-rendered `<span class="badge">`.
+## 3. Use the components
 
-## Complex props
-
-`demo-task-list` and `demo-stats` take array properties. In the template:
+Use them like any element ([`src/routes/+page.svelte`](src/routes/+page.svelte)):
 
 ```svelte
-<demo-task-list tasks={ssrProp(tasks)}></demo-task-list>
+<script lang="ts">
+  import { ssrProp } from '@ssr-examples/components/ssr-prop';
+</script>
+
+<demo-counter start="5" step="2" oncountChanged={(e: CustomEvent<number>) => (lastCount = e.detail)}
+></demo-counter>
 <demo-stats stats={ssrProp(stats)}></demo-stats>
 ```
 
-`ssrProp()` comes from the component library (`@ssr-examples/components/ssr-prop`). On the
-server it keeps the array in a registry and returns a reference that Svelte renders as an
-attribute, and Stencil's SSR runtime, in the same process, swaps the reference for the array
-while it sets up the component. Each component then carries the value to the browser itself:
-`@Prop({ serialize: 'json' })` writes it to the component's attribute on the server, and reads
-it back before the component first renders. That matters here: the components start rendering
-while SvelteKit loads the page's modules, before Svelte sets any property. On the client,
-`ssrProp()` returns the array unchanged, so Svelte then sets the property as usual, and later
-updates (`#add-stat`) work normally. If an object prop is set on the server and the component
-has no serializer (`serialize: 'json'` or a `@PropSerialize()`), `renderToString()` adds a warning to `diagnostics`, which the hook
-prints. (These need `@stencil/core` 5.0.0-beta.36 or later.)
-See [Complex props](../../README.md#complex-props).
-
-## Things to know
-
-- **Reactive text inside `scoped` or unencapsulated components doesn't hydrate.** The page binds
-  `{framework}` and `{badge}` to `$state`, but since nothing reassigns them, Svelte compiles them
-  as constants and sets `textContent` (see above). Make the value reactive (reassign it anywhere, or
-  read it from `data` or props) and Svelte instead hydrates the text node by walking the host's
-  children with `Node.prototype`'s native `firstChild` / `nextSibling` getters, which bypass
-  Stencil's [light DOM patches](https://stenciljs.com/docs/config/compat#lightdompatches). It finds
-  Stencil's `<!--r.N-->` comment and `<span class="badge">` instead of its text node, logs
-  `hydration_mismatch`, and throws away and re-renders the whole page. There's no way to tell Svelte
-  to skip hydrating an element's children. Keep reactive content out of light-DOM components'
-  slots, or use `shadow` encapsulation for components that take reactive slot content: their
-  slotted children are left as they were.
-- **Custom element props are properties on the client.** Once an element is defined, Svelte sets
-  any prop the element has a setter for as a property, never an attribute. On the server it can
-  only write attributes, which is the gap `ssrProp()` covers.
-- **Events:** `oncountChanged` works as written. Svelte 5 event attributes are case-sensitive and
-  listen for the name after `on`, here `countChanged`.
-- **A hydration mismatch replaces the whole page**, not one element, and the conformance suite
-  only catches it through the `hydration_mismatch` warning: by the time Svelte removes the tree,
-  Stencil has already removed the `s-id` attributes the "hydrated in place" check looks for.
+- **Objects and arrays:** wrap them in `ssrProp()`, or Svelte leaves them out of the server HTML.
+  In the browser it returns the value as it is. See
+  [Passing objects and arrays](../../README.md#passing-objects-and-arrays).
+- **Events:** `oncountChanged` listens for `countChanged`, exactly as written after `on`.
+- **Reactive slotted text:** Svelte 5 can't hydrate reactive text slotted into `scoped` or
+  unencapsulated components, and re-renders the page. Use `shadow` encapsulation for components
+  that take reactive slot content.

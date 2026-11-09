@@ -1,4 +1,4 @@
-// The reference implementation of CONTRACT.md, with no framework: a template string, passed
+// Stencil components server-rendered with no framework: the page is a template string, passed
 // through renderToString() before it's sent.
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
@@ -12,10 +12,8 @@ const PORT = Number(process.env.PORT ?? 3000);
 const require = createRequire(import.meta.url);
 const pkgDir = (name) => path.dirname(require.resolve(`${name}/package.json`));
 
-// Client files, served as-is (no bundler)
-const staticDirs = {
-  '/stencil/': path.join(pkgDir('@ssr-examples/components'), 'dist/loader-bundle/esm'),
-};
+// The components' client code, served as-is (no bundler)
+const STENCIL_DIR = path.join(pkgDir('@ssr-examples/components'), 'dist/loader-bundle/esm');
 
 const attr = (value) =>
   String(value).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -73,12 +71,10 @@ const server = createServer(async (req, res) => {
     if (url.pathname === '/client.js') {
       return res.writeHead(200, { 'content-type': 'text/javascript' }).end(clientJs);
     }
-    for (const [prefix, dir] of Object.entries(staticDirs)) {
-      if (url.pathname.startsWith(prefix)) {
-        const file = path.join(dir, path.normalize(url.pathname.slice(prefix.length)));
-        if (!file.startsWith(dir)) break;
-        const body = await readFile(file);
-        return res.writeHead(200, { 'content-type': 'text/javascript' }).end(body);
+    if (url.pathname.startsWith('/stencil/')) {
+      const file = path.join(STENCIL_DIR, path.normalize(url.pathname.slice('/stencil/'.length)));
+      if (file.startsWith(STENCIL_DIR)) {
+        return res.writeHead(200, { 'content-type': 'text/javascript' }).end(await readFile(file));
       }
     }
     if (url.pathname === '/') {

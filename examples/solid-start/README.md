@@ -1,33 +1,22 @@
 # SolidStart
 
-SolidStart renders the page as one string (`mode: 'async'`), then a middleware passes the whole
-document through Stencil's `renderToString()`. Solid then hydrates the page, and the Stencil
-components hydrate alongside it.
+Server-rendering Stencil components in a SolidStart app.
 
 ```sh
-pnpm build          # at the repo root, once
-pnpm --filter @ssr-examples/example-solid-start dev       # http://localhost:3005
-# or
-pnpm --filter @ssr-examples/example-solid-start build && pnpm --filter @ssr-examples/example-solid-start start
-BASE_URL=http://localhost:3005 pnpm test
+pnpm install && pnpm build   # at the repo root, once
+pnpm dev                     # in this folder: http://localhost:3005
 ```
 
-## The integration
+## 1. Render the components on the server
 
-| File | What it does |
-|---|---|
-| [`src/middleware.ts`](src/middleware.ts) | h3 middleware: `renderToString()` on every HTML response |
-| [`vite.config.ts`](vite.config.ts) | `solidStart({ middleware: './src/middleware.ts' })` registers it |
-| [`src/entry-server.tsx`](src/entry-server.tsx) | `createHandler(..., { mode: 'async' })`, so the page arrives as one string instead of a stream |
-| [`src/entry-client.tsx`](src/entry-client.tsx) | awaits `defineCustomElements()`, then `mount()` hydrates |
-| [`src/routes/index.tsx`](src/routes/index.tsx) | the page: plain custom elements in Solid JSX |
-| [`src/custom-elements.d.ts`](src/custom-elements.d.ts) | JSX types for the `demo-*` elements |
-| [`src/routes/health.ts`](src/routes/health.ts) | `GET /health` API route |
-
-### Server
+Render the page as one string instead of streaming it, with `mode: 'async'`
+([`src/entry-server.tsx`](src/entry-server.tsx)). Then a middleware passes it through
+`renderToString()` ([`src/middleware.ts`](src/middleware.ts)):
 
 ```ts
-// src/middleware.ts
+import { createMiddleware } from '@solidjs/start/middleware';
+import { renderToString } from '@ssr-examples/components/ssr';
+
 export default createMiddleware([
   async (event, next) => {
     const body = await next();
@@ -41,77 +30,39 @@ export default createMiddleware([
 ]);
 ```
 
-```tsx
-// src/entry-server.tsx
-export default createHandler(() => <StartServer document={...} />, { mode: 'async' });
-```
+Register it with `solidStart({ middleware: './src/middleware.ts' })` in
+[`vite.config.ts`](vite.config.ts).
 
-SolidStart streams by default, and then `next()` gives you an h3 streaming response, not a string.
-`renderToString()` needs the whole document, so `mode: 'async'` makes SolidStart wait for
-everything (Suspense included) and hand back one HTML string. The middleware sees every
-response, so it only touches strings with an HTML content type (`/health`, server functions and
-assets pass through).
+## 2. Define the components before Solid hydrates
 
-SolidStart v2 runs on Vite + Nitro + h3 v2 (no more Vinxi). The middleware is a plain array of
-h3 middleware; `onRequest` / `onBeforeResponse` still work but are deprecated.
-
-### Client
+Mount once `defineCustomElements()` resolves ([`src/entry-client.tsx`](src/entry-client.tsx)):
 
 ```tsx
-// src/entry-client.tsx
+import { mount, StartClient } from '@solidjs/start/client';
+import { defineCustomElements } from '@ssr-examples/components/loader';
+
 defineCustomElements().then(() => mount(() => <StartClient />, document.getElementById('app')!));
 ```
 
-**This must finish before Solid hydrates.** `defineCustomElements()` is async, so mount in its
-`.then()`. Stencil's server render changes the light DOM of
-`scoped` and unencapsulated components (`demo-badge`, `demo-notice`). Once the components are
-defined, Stencil's [light DOM patches](https://stenciljs.com/docs/config/compat#lightdompatches)
-make `firstChild`, `nextSibling` and `childNodes` report only the slotted content, so Solid sees
-the DOM it rendered. If the components are defined after hydration, for example in `onMount`,
-Solid walks into Stencil's nodes instead and fails:
+Don't define them later, such as in `onMount`: Solid would fail with a hydration mismatch and
+throw the server-rendered page away.
 
-```
-Error: Hydration Mismatch. Unable to find DOM nodes for hydration key: 0000010010000000001
-```
+## 3. Use the components
 
-and the route's error boundary throws the server-rendered page away.
-
-## Complex props
-
-`demo-task-list` and `demo-stats` take array properties. In the template:
+Declare the `demo-*` elements for JSX ([`src/custom-elements.d.ts`](src/custom-elements.d.ts)),
+then use them like any element ([`src/routes/index.tsx`](src/routes/index.tsx)):
 
 ```tsx
-<demo-task-list tasks={ssrProp(tasks)} />
+import { ssrProp } from '@ssr-examples/components/ssr-prop';
+
+<demo-counter start="5" step="2" on:countChanged={(e) => setLastCount(e.detail)} />
 <demo-stats stats={ssrProp(stats())} />
 ```
 
-`ssrProp()` comes from the component library (`@ssr-examples/components/ssr-prop`). On the
-server it keeps the array in a registry and returns a reference that Solid renders as an
-attribute, and Stencil's SSR runtime, in the same process, swaps the reference for the array
-while it sets up the component. Each component then carries the value to the browser itself:
-`@Prop({ serialize: 'json' })` writes it to the component's attribute on the server, and reads
-it back before the component first renders. If an object prop is set on the server and the
-component has no serializer (`serialize: 'json'` or a `@PropSerialize()`), `renderToString()` adds a warning to `diagnostics`, which
-the middleware prints. (These need `@stencil/core` 5.0.0-beta.36 or later.) On the client, `ssrProp()` returns the array unchanged, and Solid sets it as a property (it does
-that for any attribute on a custom element), so later updates (`#add-stat`) work normally. See
-[Complex props](../../README.md#complex-props).
-
-Don't write `prop:stats`: Solid's server renderer drops `prop:` bindings, so the server HTML
-gets no value and renders the empty state.
-
-## Things to know
-
-- **Events:** write `on:countChanged`. `onCountChanged` compiles to
-  `addEventListener('countchanged')`, which never fires.
-- **Attributes vs properties:** Solid sets every binding on a custom element as a property on
-  the client, but as an attribute on the server, which is what `ssrProp()` relies on. Don't use
-  `prop:` for complex props: Solid's server renderer drops it.
-- **Text bindings in light-DOM components:** a sole child like `<demo-badge>{badge()}</demo-badge>`
-  is skipped during hydration, and then updated through `textContent`, which Stencil patches.
-  Leave `compat.lightDomPatches` on.
-- **Mixed text gets markers.** `Last count: {x}` renders as `Last count: <!--$-->none<!--/-->`,
-  so the paragraph binds one template string instead. Inside `demo-notice` the markers are fine:
-  Solid finds them through Stencil's patched `firstChild` / `nextSibling`.
-- **Lazy routes can hide ordering bugs.** `FileRoutes` loads each page asynchronously, so a page
-  often hydrates after code that runs right after `mount()`. Don't rely on that: await
-  `defineCustomElements()` before `mount()`.
+- **Objects and arrays:** wrap them in `ssrProp()`, or Solid leaves them out of the server HTML.
+  In the browser it returns the value as it is. See
+  [Passing objects and arrays](../../README.md#passing-objects-and-arrays).
+- **Events:** write `on:countChanged`. `onCountChanged` listens for `countchanged`, which never
+  fires.
+- **No `prop:`:** Solid's server renderer drops `prop:` bindings, so the server HTML gets no
+  value. A plain binding is already set as a property in the browser.

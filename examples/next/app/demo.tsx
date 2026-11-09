@@ -23,8 +23,7 @@ export function Demo({ framework }: { framework: string }) {
       </DemoCard>
       <DemoCounter start={5} step={2} onCountChanged={(e) => setLastCount(e.detail)} />
       <p id="last-count">{`Last count: ${lastCount ?? 'none'}`}</p>
-      {/* complex props need nothing extra: the wrappers set them as properties on the server
-          too, and Stencil sends them to the client with the HTML */}
+      {/* objects and arrays need nothing extra: the wrappers set them as properties */}
       <DemoTaskList tasks={tasks} />
       <DemoStats stats={stats} />
       <button id="add-stat" type="button" onClick={() => setStats((s) => [...s, extraStat])}>

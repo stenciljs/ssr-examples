@@ -13,7 +13,7 @@ declare module 'solid-js' {
       'demo-counter': Props<Components.DemoCounter> & {
         'on:countChanged'?: (event: DemoCounterCustomEvent<number>) => void;
       };
-      'demo-task-list': Props<Components.DemoTaskList> & { 'attr:tasks'?: string };
+      'demo-task-list': Props<Components.DemoTaskList>;
       'demo-stats': Props<Components.DemoStats>;
     }
   }
