@@ -14,28 +14,30 @@ pnpm dev                     # in this folder: http://localhost:3006
 ## 1. Render the components on the server
 
 `handleRequest` in `entry.server.tsx` is the one place that sees the whole page, but React streams
-it. Wait for `onAllReady`, buffer the stream, and pass it through `renderToString()`
+it. Wait for it to finish (`allReady`), then pass it through `renderToString()`
 ([`app/entry.server.tsx`](app/entry.server.tsx); run `npx react-router reveal` to get the default
 file to start from):
 
 ```tsx
+import { renderToReadableStream } from 'react-dom/server';
 import { renderToString } from '@ssr-examples/components/ssr';
 
-const { pipe, abort } = renderToPipeableStream(<ServerRouter context={routerContext} url={request.url} />, {
-  onAllReady() {
-    const chunks: Buffer[] = [];
-    const body = new PassThrough();
-    body.on('data', (chunk: Buffer) => chunks.push(chunk));
-    body.on('end', async () => {
-      const { html, diagnostics } = await renderToString(Buffer.concat(chunks).toString('utf8'), { reuseWindow: true });
-      for (const d of diagnostics) console.warn('[stencil]', d.messageText);
-      responseHeaders.set('Content-Type', 'text/html; charset=utf-8');
-      resolve(new Response(html, { headers: responseHeaders, status: responseStatusCode }));
-    });
-    pipe(body);
-  },
-  // onShellError, onError ...
-});
+export default async function handleRequest(request, responseStatusCode, responseHeaders, routerContext) {
+  const stream = await renderToReadableStream(<ServerRouter context={routerContext} url={request.url} />, {
+    signal: AbortSignal.timeout(streamTimeout + 1000),
+    onError(error) {
+      responseStatusCode = 500;
+      console.error(error);
+    },
+  });
+  await stream.allReady;
+
+  const { html, diagnostics } = await renderToString(await new Response(stream).text(), { reuseWindow: true });
+  for (const d of diagnostics) console.warn('[stencil]', d.messageText);
+
+  responseHeaders.set('Content-Type', 'text/html; charset=utf-8');
+  return new Response(html, { headers: responseHeaders, status: responseStatusCode });
+}
 ```
 
 ## 2. Define the components before React hydrates

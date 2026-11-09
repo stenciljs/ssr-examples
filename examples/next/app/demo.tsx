@@ -7,7 +7,7 @@ import { extraStat, stats as initialStats, tasks } from '@ssr-examples/demo-data
 import { DemoBadge, DemoCard, DemoCounter, DemoNotice, DemoStats, DemoTaskList } from '@ssr-examples/components-react/next';
 
 export function Demo({ framework }: { framework: string }) {
-  const [badge] = useState('SSR');
+  const badge = 'SSR';
   const [stats, setStats] = useState(initialStats);
   const [lastCount, setLastCount] = useState<number | null>(null);
 

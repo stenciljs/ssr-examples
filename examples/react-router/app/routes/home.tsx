@@ -3,8 +3,8 @@ import { extraStat, stats as initialStats, tasks } from '@ssr-examples/demo-data
 import { ssrProp } from '@ssr-examples/components/ssr-prop';
 
 export default function Home() {
-  const [framework] = useState('React Router');
-  const [badge] = useState('SSR');
+  const framework = 'React Router';
+  const badge = 'SSR';
   const [stats, setStats] = useState(initialStats);
   const [lastCount, setLastCount] = useState<number | null>(null);
 
