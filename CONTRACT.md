@@ -14,9 +14,9 @@ All examples depend on the workspace packages:
 
 | Package | Use |
 |---|---|
-| `@ssr-examples/components` | `./ssr` on the server (`renderToString`), `./loader` on the client (`defineCustomElements`) |
+| `@ssr-examples/components` | `./ssr` on the server (`renderToString`), `./loader` on the client (`defineCustomElements`), `./ssr-prop` in templates (`ssrProp`) |
 | `@ssr-examples/components-react` | Next.js only: React wrappers; `./next` is the server version |
-| `@ssr-examples/ssr-props` | complex props: `ssrProp()` in templates, `ssrPropsOptions()` in the render hook |
+| `@ssr-examples/demo-data` | the data below |
 
 ## Routes
 
@@ -53,7 +53,7 @@ For most frameworks, a response hook or middleware passes the whole HTML documen
   <demo-counter start="5" step="2"></demo-counter>
   <p id="last-count">Last count: none</p>
 
-  <!-- `tasks` and `stats` are arrays, bound through ssrProp() (see packages/ssr-props) -->
+  <!-- `tasks` and `stats` are arrays, bound through ssrProp() (see README: Complex props) -->
   <demo-task-list tasks="{tasks}"></demo-task-list>
   <demo-stats stats="{stats}"></demo-stats>
   <!-- framework: on click, append { label: 'Delta', value: 9 } to stats -->

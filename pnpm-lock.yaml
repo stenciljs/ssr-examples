@@ -4,10 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  '@stencil/core': link:/Users/John.Jenkins/projects/stenciljs/packages/core
-  '@stencil/react-output-target': file:node_modules/.local-packs/stencil-react-output-target-1.7.0-c1089d793c.tgz
-
 importers:
 
   .: {}
@@ -41,9 +37,6 @@ importers:
       '@ssr-examples/demo-data':
         specifier: workspace:*
         version: link:../../packages/demo-data
-      '@ssr-examples/ssr-props':
-        specifier: workspace:*
-        version: link:../../packages/ssr-props
       express:
         specifier: ^5.1.0
         version: 5.3.0
@@ -84,9 +77,6 @@ importers:
       '@ssr-examples/demo-data':
         specifier: workspace:*
         version: link:../../packages/demo-data
-      '@ssr-examples/ssr-props':
-        specifier: workspace:*
-        version: link:../../packages/ssr-props
       astro:
         specifier: ^7.4.7
         version: 7.4.7(@types/node@24.19.2)(db0@0.3.4)(esbuild@0.28.2)(ioredis@5.11.1)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(yaml@2.9.1)
@@ -133,9 +123,6 @@ importers:
       '@ssr-examples/demo-data':
         specifier: workspace:*
         version: link:../../packages/demo-data
-      '@ssr-examples/ssr-props':
-        specifier: workspace:*
-        version: link:../../packages/ssr-props
 
   examples/nuxt:
     dependencies:
@@ -145,9 +132,6 @@ importers:
       '@ssr-examples/demo-data':
         specifier: workspace:*
         version: link:../../packages/demo-data
-      '@ssr-examples/ssr-props':
-        specifier: workspace:*
-        version: link:../../packages/ssr-props
       nuxt:
         specifier: ^4.6.4
         version: 4.6.4(@babel/plugin-syntax-jsx@7.29.7(@babel/core@7.29.13))(@babel/plugin-syntax-typescript@7.29.7(@babel/core@7.29.13))(@oxc-project/types@0.157.0)(@parcel/watcher@2.6.0)(@types/node@24.19.2)(@vue/compiler-sfc@3.5.45)(acorn@8.19.0)(bare-buffer@3.7.1)(confbox@0.3.2)(db0@0.3.4)(dotenv@17.4.2)(esbuild@0.28.2)(giget@3.3.1)(ioredis@5.11.1)(lightningcss@1.33.0)(mlly@1.8.2)(oxc-parser@0.156.0)(rolldown@1.3.0)(rollup-plugin-visualizer@7.1.2(rolldown@1.3.0)(rollup@4.68.0))(rollup@4.68.0)(sass-embedded@1.104.1)(sass@1.104.1)(srvx@1.0.8)(terser@5.51.2)(typescript@6.0.3)(vite@8.3.6(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(yaml@2.9.1))(yaml@2.9.1)
@@ -172,9 +156,6 @@ importers:
       '@ssr-examples/demo-data':
         specifier: workspace:*
         version: link:../../packages/demo-data
-      '@ssr-examples/ssr-props':
-        specifier: workspace:*
-        version: link:../../packages/ssr-props
       isbot:
         specifier: ^5.1.36
         version: 5.2.2
@@ -221,9 +202,6 @@ importers:
       '@ssr-examples/demo-data':
         specifier: workspace:*
         version: link:../../packages/demo-data
-      '@ssr-examples/ssr-props':
-        specifier: workspace:*
-        version: link:../../packages/ssr-props
       nitro:
         specifier: ^3.0.260610-beta
         version: 3.0.260610-beta(chokidar@5.0.0)(dotenv@17.4.2)(giget@3.3.1)(ioredis@5.11.1)(jiti@2.7.0)(lru-cache@11.5.3)(rollup@4.68.0)(vite@8.3.6(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(yaml@2.9.1))
@@ -242,9 +220,6 @@ importers:
       '@ssr-examples/demo-data':
         specifier: workspace:*
         version: link:../../packages/demo-data
-      '@ssr-examples/ssr-props':
-        specifier: workspace:*
-        version: link:../../packages/ssr-props
     devDependencies:
       '@sveltejs/adapter-node':
         specifier: ^6.0.0
@@ -274,11 +249,11 @@ importers:
   packages/components:
     devDependencies:
       '@stencil/core':
-        specifier: link:/Users/John.Jenkins/projects/stenciljs/packages/core
-        version: link:../../../../stenciljs/packages/core
+        specifier: 5.0.0-beta.36
+        version: 5.0.0-beta.36(rollup@4.68.0)
       '@stencil/react-output-target':
-        specifier: file:../../node_modules/.local-packs/stencil-react-output-target-1.7.0-c1089d793c.tgz
-        version: file:node_modules/.local-packs/stencil-react-output-target-1.7.0-c1089d793c.tgz(@stencil/core@..+stenciljs+packages+core)(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+        specifier: 1.8.1
+        version: 1.8.1(@stencil/core@5.0.0-beta.36(rollup@4.68.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
 
   packages/components-react:
     dependencies:
@@ -286,8 +261,8 @@ importers:
         specifier: workspace:*
         version: link:../components
       '@stencil/react-output-target':
-        specifier: file:../../node_modules/.local-packs/stencil-react-output-target-1.7.0-c1089d793c.tgz
-        version: file:node_modules/.local-packs/stencil-react-output-target-1.7.0-c1089d793c.tgz(@stencil/core@..+stenciljs+packages+core)(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+        specifier: 1.8.1
+        version: 1.8.1(@stencil/core@5.0.0-beta.36(rollup@4.68.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
     devDependencies:
       '@types/react':
         specifier: ^19.2.0
@@ -306,12 +281,6 @@ importers:
         version: 5.9.3
 
   packages/demo-data: {}
-
-  packages/ssr-props:
-    devDependencies:
-      typescript:
-        specifier: ^5.9.3
-        version: 5.9.3
 
   tests/conformance:
     devDependencies:
@@ -824,6 +793,18 @@ packages:
   '@csstools/css-tokenizer@4.0.2':
     resolution: {integrity: sha512-OoKoR0f76dCY666JlcbhmVTs2drYj1GUXZTYTcbUgJjh9Nv41aFfZ21bPQTERm5+L5cBDo466NltB2lplS5GBw==}
     engines: {node: '>=20.19.0'}
+
+  '@csstools/selector-resolve-nested@4.0.2':
+    resolution: {integrity: sha512-JpjNBJFA+4OnAHKRK4AMp8xrYyLhI9XapOeBlP2PhRU/IylSw+1ep3BFNTksBJnrTS3KT6kqKNVfpzLLwZUW5Q==}
+    engines: {node: '>=20.19.0'}
+    peerDependencies:
+      postcss-selector-parser: ^7.1.1
+
+  '@csstools/selector-specificity@6.0.1':
+    resolution: {integrity: sha512-MBuqFIIvqk4S593MGAskTkPpEUUzZNvGzh8mMxEwl3oHwjQlXmqHEDxNbN3Y0Tsh+xjmem4GZjeg7I0qkwBivg==}
+    engines: {node: '>=20.19.0'}
+    peerDependencies:
+      postcss-selector-parser: ^7.1.1
 
   '@dxup/nuxt@0.5.11':
     resolution: {integrity: sha512-J3Hq8IO1U5RoQrCH4Av/oOBmXg+2CvHzNjo+12ALhUlHpR6omQf02AVHY+IhEvf2iPeLFiEScQSzikJX7fXO8w==}
@@ -2104,6 +2085,9 @@ packages:
   '@poppinss/exception@1.2.3':
     resolution: {integrity: sha512-dCED+QRChTVatE9ibtoaxc+WkdzOSjYTKi/+uacHWIsfodVfpsueo3+DKpgU5Px8qXjgmXkSvhXvSCz3fnP9lw==}
 
+  '@preact/signals-core@1.14.5':
+    resolution: {integrity: sha512-vcRv7Ityz5JVmeiVqIluLFzT/PDS/AlhHUpw3/aUWqcVUs6bDGIPXE/6RSC4evBNWYvnniozg5Syfj33al3gkg==}
+
   '@react-router/dev@8.5.1':
     resolution: {integrity: sha512-1NQ/lP8m7Kd9G4cGKPoEMZe0qcWOnRkf8QxpAcnX/3V5wJp+/mDvM9QUqwUxI+RywytNNGtc4uuDFhwt0xMLbg==}
     engines: {node: '>=22.22.0'}
@@ -2622,13 +2606,40 @@ packages:
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
 
-  '@stencil/react-output-target@file:node_modules/.local-packs/stencil-react-output-target-1.7.0-c1089d793c.tgz':
-    resolution: {integrity: sha512-2raPHArKTIx5zwtCNmSBga9+y2m5zsuHLK5FNasAoMwga/tNUBy/ohzRpDgkhGX2hhx5DLNipNM880caqNmWOw==, tarball: file:node_modules/.local-packs/stencil-react-output-target-1.7.0-c1089d793c.tgz}
-    version: 1.7.0
+  '@stencil/cli@5.0.0-beta.36':
+    resolution: {integrity: sha512-AZaDFQrewmC+vDozoRUZG7MeBP4CBeECJdUdSJQHAoQl0RHu0tiL95pPtz74m3+iMBCEVtsApR6X3GvLahx15A==}
+    engines: {node: '>=22.0.0'}
+    hasBin: true
     peerDependencies:
-      '@stencil/core': link:/Users/John.Jenkins/projects/stenciljs/packages/core
+      '@stencil/core': ^5.0.0 || 5.0.0-beta.36
+
+  '@stencil/core@5.0.0-beta.36':
+    resolution: {integrity: sha512-xkrRvU8YfMd+aRCiPQ/KZQ/2OGScdPxKE1lh+nSAZjLClCWlXglRNuoMzmmzMwKtdJoIGCzfxOesgYlRiuMXtg==}
+    engines: {node: '>=22.0.0'}
+    hasBin: true
+
+  '@stencil/dev-server@5.0.0-beta.36':
+    resolution: {integrity: sha512-fNEw8z42pmR0Z1wzz1hVqTRXaaQkoFOMWs6oDgYF24qD63HzmkdulVs/rfbKxn9tv9if2t4lrUDNBKlxObdKzw==}
+    engines: {node: '>=22.0.0'}
+    peerDependencies:
+      '@stencil/core': ^5.0.0 || 5.0.0-beta.36
+
+  '@stencil/mock-doc@5.0.0-beta.36':
+    resolution: {integrity: sha512-3SwPk/7ZOTZ58bL+pw0HJT1111/NOhLEPNuAXrFoRI4Mdfkn+wzKijIBJPwZXL/Y2eMxjfJGym5eY04PvskfHg==}
+    engines: {node: '>=22.0.0'}
+
+  '@stencil/react-output-target@1.8.1':
+    resolution: {integrity: sha512-6HWtiAoPjX6oJplkp+JoiUxbpDrDtF8NkdyE57pOucymdplEd1qSwtJjelNyjPQ9dV2V+AV5zjgpbNCQSp+zHw==}
+    peerDependencies:
+      '@stencil/core': '>=3 || >=4.0.0 || ^5.0.0 || >=5.0.0-beta.18'
       react: ^18 || ^19
       react-dom: ^18 || ^19
+
+  '@stencil/templates@5.0.0-beta.36':
+    resolution: {integrity: sha512-XI5AHzFlwBooKPhUl6zPD+lbI9qltAs1Yk/wCdN5RX3Ergp7CeHPBwsnsQfDPqfwGpCiRp/EZZJLtUUKgxWGow==}
+    engines: {node: '>=22.0.0'}
+    peerDependencies:
+      '@stencil/core': ^5.0.0 || 5.0.0-beta.36
 
   '@sveltejs/acorn-typescript@1.0.13':
     resolution: {integrity: sha512-wgKggnhZVL9Bfx1OaKKTrYY9BFRk6C8UAkQNUcIv1+llzYrIqy+RZm5HPKzn0NpEBvTVhTqB4kQyllZywsRBRQ==}
@@ -4620,6 +4631,14 @@ packages:
       '@types/node':
         optional: true
 
+  nwsapi@2.2.28:
+    resolution: {integrity: sha512-IlVB7OS7qrOsVYlpnFIkETjMwT9jwvmocJmmM+GZU/PAB3uGi9Ezd7vcWhWBUnSc0ya4ppmQITOyP1ez9gg8cg==}
+
+  nypm@0.3.12:
+    resolution: {integrity: sha512-D3pzNDWIvgA+7IORhD/IuWzEk4uXv6GsgOxiid4UU3h9oq5IqV1KtPDi63n4sZJ/xcWlr88c0QM2RgN5VbOhFA==}
+    engines: {node: ^14.16.0 || >=16.10.0}
+    hasBin: true
+
   object-identity@0.2.3:
     resolution: {integrity: sha512-2J8Joz2Tf7aaylhqFvIUJHNgpuGR38Hh75Voq9GzTbStBxJUaOtN0K1aOd3cV5qp+ij1pMqRbPrGCGMOyX303w==}
 
@@ -4761,6 +4780,9 @@ packages:
   path-to-regexp@8.4.2:
     resolution: {integrity: sha512-qRcuIdP69NPm4qbACK+aDogI5CBDMi1jKe0ry5rSQJz8JVLsC7jV8XpiJjGRLLol3N+R5ihGYcrPLTno6pAdBA==}
 
+  pathe@1.1.2:
+    resolution: {integrity: sha512-whLdWMYL2TwI08hn8/ZqAbrVemu0LNaNNJZX73O6qaIdCTfXutsLhMkjdENX0qhsQ9uIimo4/aQOmXkoon2nDQ==}
+
   pathe@2.0.3:
     resolution: {integrity: sha512-WUjGcAqP1gQacoQe+OBJsFA7Ld4DyXuUIjZ5cc75cLHvJ7dtNsTugphxIADwspS+AraAUePCKrSVtPLFj/F88w==}
 
@@ -4811,11 +4833,21 @@ packages:
   postcss-media-query-parser@0.2.3:
     resolution: {integrity: sha512-3sOlxmbKcSHMjlUXQZKQ06jOswE7oVkXPxmZdoB1r5l0q6gTFTQSHxNxOrCccElbW7dxNytifNEo8qidX2Vsig==}
 
+  postcss-nesting@14.0.3:
+    resolution: {integrity: sha512-S6NJP2WFinT50vIo7fu3Z8PrTgng3P0ky47a5wQSrQpsH3WS82ZpjkIdAs+2ltRkk0wU7vRBKLYM96qY0RvKjA==}
+    engines: {node: '>=20.19.0'}
+    peerDependencies:
+      postcss: ^8.4
+
   postcss-safe-parser@7.1.0:
     resolution: {integrity: sha512-1WzZxRLaAFwEh6Do+zyGpjWV3nGJNxxhuh7Ubu/q1ICImMgZJnLwhoaEpRbG4pJppp2Y1ncL9ffA2f+LhrefQg==}
     engines: {node: '>=18.0'}
     peerDependencies:
       postcss: ^8.4.31
+
+  postcss-selector-parser@7.2.0:
+    resolution: {integrity: sha512-Khh/tERVBn0I1499dvBSHY0pWJloMJWUxDsOBM0CCDPAcVZ10Jl2L1qy1f19uEX22spa8Mv7DCdEQJc0cGwBhQ==}
+    engines: {node: '>=4'}
 
   postcss-value-parser@4.2.0:
     resolution: {integrity: sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==}
@@ -5397,6 +5429,9 @@ packages:
   statuses@2.0.2:
     resolution: {integrity: sha512-DvEy55V3DB7uknRo+4iOGT5fP1slR8wQohVdknigZPMpMstaKJQWhwiYBACJE3Ul2pTnATihhBYnRhZQHGBiRw==}
     engines: {node: '>= 0.8'}
+
+  std-env@3.10.0:
+    resolution: {integrity: sha512-5GS12FdOZNliM5mAOxFRg7Ir0pWz8MdpYm6AY6VPkGpbA7ZzmbzNcBJQ0GPvvyWgcY7QAhCgf9Uy89I03faLkg==}
 
   std-env@4.3.0:
     resolution: {integrity: sha512-OtU/EgQ1kIm5KwqQpBC6ZEMXrZRui11w8zgfTWp8cdO9B8OaPsbA8bTHO2P+HNo1VlUTGMVBwPhydu6poeXiag==}
@@ -6856,6 +6891,14 @@ snapshots:
 
   '@csstools/css-tokenizer@4.0.2': {}
 
+  '@csstools/selector-resolve-nested@4.0.2(postcss-selector-parser@7.2.0)':
+    dependencies:
+      postcss-selector-parser: 7.2.0
+
+  '@csstools/selector-specificity@6.0.1(postcss-selector-parser@7.2.0)':
+    dependencies:
+      postcss-selector-parser: 7.2.0
+
   '@dxup/nuxt@0.5.11(@nuxt/schema@4.6.4)(confbox@0.3.2)(dotenv@17.4.2)(esbuild@0.28.2)(giget@3.3.1)(jiti@2.7.0)(mlly@1.8.2)(oxc-parser@0.156.0)(rolldown@1.3.0)(rollup@4.68.0)(vite@8.3.6(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(yaml@2.9.1))':
     dependencies:
       '@dxup/unimport': 0.1.2
@@ -8116,6 +8159,8 @@ snapshots:
 
   '@poppinss/exception@1.2.3': {}
 
+  '@preact/signals-core@1.14.5': {}
+
   '@react-router/dev@8.5.1(@react-router/serve@8.5.1(react-router@8.5.1(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(typescript@5.9.3))(react-router@8.5.1(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(typescript@5.9.3)(vite@8.3.6(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(yaml@2.9.1))':
     dependencies:
       '@babel/core': 7.29.13
@@ -8525,10 +8570,69 @@ snapshots:
 
   '@standard-schema/spec@1.1.0': {}
 
-  '@stencil/react-output-target@file:node_modules/.local-packs/stencil-react-output-target-1.7.0-c1089d793c.tgz(@stencil/core@..+stenciljs+packages+core)(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
+  '@stencil/cli@5.0.0-beta.36(@stencil/core@5.0.0-beta.36(rollup@4.68.0))':
+    dependencies:
+      '@clack/prompts': 1.8.1
+      '@stencil/core': 5.0.0-beta.36(rollup@4.68.0)
+      '@stencil/dev-server': 5.0.0-beta.36(@stencil/core@5.0.0-beta.36(rollup@4.68.0))
+      '@stencil/templates': 5.0.0-beta.36(@stencil/core@5.0.0-beta.36(rollup@4.68.0))
+      local-pkg: 1.2.1
+      nypm: 0.3.12
+      std-env: 3.10.0
+      typescript: 6.0.3
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
+  '@stencil/core@5.0.0-beta.36(rollup@4.68.0)':
+    dependencies:
+      '@parcel/watcher': 2.6.0
+      '@preact/signals-core': 1.14.5
+      '@rollup/pluginutils': 5.5.1(rollup@4.68.0)
+      '@stencil/cli': 5.0.0-beta.36(@stencil/core@5.0.0-beta.36(rollup@4.68.0))
+      '@stencil/dev-server': 5.0.0-beta.36(@stencil/core@5.0.0-beta.36(rollup@4.68.0))
+      '@stencil/mock-doc': 5.0.0-beta.36
+      browserslist: 4.29.5
+      chalk: 5.6.2
+      css-what: 7.0.0
+      jiti: 2.7.0
+      lightningcss: 1.33.0
+      magic-string: 0.30.21
+      picomatch: 4.0.7
+      postcss: 8.5.32
+      postcss-nesting: 14.0.3(postcss@8.5.32)
+      postcss-safe-parser: 7.1.0(postcss@8.5.32)
+      postcss-selector-parser: 7.2.0
+      resolve: 1.22.14
+      rolldown: 1.3.0
+      semver: 7.8.6
+      terser: 5.51.2
+      tinyglobby: 0.2.17
+      typescript: 6.0.3
+    transitivePeerDependencies:
+      - bufferutil
+      - rollup
+      - utf-8-validate
+
+  '@stencil/dev-server@5.0.0-beta.36(@stencil/core@5.0.0-beta.36(rollup@4.68.0))':
+    dependencies:
+      '@stencil/core': 5.0.0-beta.36(rollup@4.68.0)
+      launch-editor: 2.14.2
+      open: 11.0.4
+      ws: 8.22.1
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
+  '@stencil/mock-doc@5.0.0-beta.36':
+    dependencies:
+      nwsapi: 2.2.28
+      parse5: 8.1.0
+
+  '@stencil/react-output-target@1.8.1(@stencil/core@5.0.0-beta.36(rollup@4.68.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
     dependencies:
       '@lit/react': 1.0.8(@types/react@19.3.0)
-      '@stencil/core': link:../../stenciljs/packages/core
+      '@stencil/core': 5.0.0-beta.36(rollup@4.68.0)
       html-react-parser: 5.2.17(@types/react@19.3.0)(react@19.3.1)
       react: 19.3.1
       react-dom: 19.3.1(react@19.3.1)
@@ -8536,6 +8640,10 @@ snapshots:
       ts-morph: 28.0.0
     transitivePeerDependencies:
       - '@types/react'
+
+  '@stencil/templates@5.0.0-beta.36(@stencil/core@5.0.0-beta.36(rollup@4.68.0))':
+    dependencies:
+      '@stencil/core': 5.0.0-beta.36(rollup@4.68.0)
 
   '@sveltejs/acorn-typescript@1.0.13(acorn@8.19.0)':
     dependencies:
@@ -10870,6 +10978,17 @@ snapshots:
       - xml2js
       - yaml
 
+  nwsapi@2.2.28: {}
+
+  nypm@0.3.12:
+    dependencies:
+      citty: 0.1.6
+      consola: 3.4.2
+      execa: 8.0.1
+      pathe: 1.1.2
+      pkg-types: 1.3.1
+      ufo: 1.6.4
+
   object-identity@0.2.3: {}
 
   object-inspect@1.13.4: {}
@@ -11043,6 +11162,8 @@ snapshots:
 
   path-to-regexp@8.4.2: {}
 
+  pathe@1.1.2: {}
+
   pathe@2.0.3: {}
 
   perfect-debounce@2.1.0: {}
@@ -11084,9 +11205,20 @@ snapshots:
 
   postcss-media-query-parser@0.2.3: {}
 
+  postcss-nesting@14.0.3(postcss@8.5.32):
+    dependencies:
+      '@csstools/selector-resolve-nested': 4.0.2(postcss-selector-parser@7.2.0)
+      '@csstools/selector-specificity': 6.0.1(postcss-selector-parser@7.2.0)
+      postcss: 8.5.32
+      postcss-selector-parser: 7.2.0
+
   postcss-safe-parser@7.1.0(postcss@8.5.32):
     dependencies:
       postcss: 8.5.32
+
+  postcss-selector-parser@7.2.0:
+    dependencies:
+      util-deprecate: 1.0.2
 
   postcss-value-parser@4.2.0: {}
 
@@ -11741,6 +11873,8 @@ snapshots:
   standard-as-callback@2.1.0: {}
 
   statuses@2.0.2: {}
+
+  std-env@3.10.0: {}
 
   std-env@4.3.0: {}
 

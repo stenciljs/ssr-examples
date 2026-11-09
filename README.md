@@ -59,28 +59,55 @@ render. See [`examples/next`](examples/next).
 
 ## Complex props
 
-HTML can only carry strings, so an array or object bound in a template doesn't reach a
-server-rendered component: frameworks drop it or render `"[object Object]"`. The examples wrap
-complex values in `ssrProp()` ([`packages/ssr-props`](packages/ssr-props)):
+HTML can only carry strings, so an object or array has two gaps to cross: from the framework's
+render to Stencil's on the server, and from the server to the browser.
+
+**Into the server render: `ssrProp()`.** Frameworks drop objects when they write HTML. Wrap
+them in `ssrProp()`, which the `ssr` output target generates alongside the SSR module:
 
 ```vue
+<script setup>
+import { ssrProp } from 'my-components/ssr-prop';
+</script>
+
 <demo-stats :stats="ssrProp(stats)" />
 ```
 
-On the server it's a token attribute that `ssrPropsOptions()` turns back into the property
-before Stencil renders. On the client it's the value itself, so the framework sets the property
-as usual.
+- **On the server**, `ssrProp()` keeps the value and returns a reference to it, which the
+  framework renders as an ordinary attribute. Stencil's SSR, in the same process, swaps the
+  reference for the value itself while it sets the component up. Nothing is serialized on the
+  way, so a `Map`, a `Date` or a class instance arrives intact, and nothing changes in your
+  `renderToString()` call. Bind under the prop name (`chartData`) or its dash-case
+  (`chart-data`): both work.
+- **In the browser**, `ssrProp()` returns the value, so the framework sets the property as usual.
 
-```ts
-const { html } = await renderToString(page, { reuseWindow: true, ...ssrPropsOptions() });
+**To the browser: the prop's own serializer.** The component writes the value to its attribute
+on the server and reads it back before it first renders in the browser. For JSON, that's one
+option on the prop:
+
+```tsx
+@Prop({ serialize: 'json' }) stats: DemoStat[] = [];
 ```
 
-The client half is a proposed Stencil core feature, the `transferProps` render option (on by
-default). At the end of the server render, complex props that were set on a host from outside,
-and have no attribute, are written to an `s-props` attribute. The client sets them before the
-component's first render, so it hydrates with the same data, with no flash of an empty state.
-It needs no `ssrProp()` for values set in `beforeSsr` or by the React output target's wrappers,
-so Next.js gets it with no extra code.
+For anything else (devalue for a `Map` or a `Date`, or your own format), write the pair yourself:
+
+```tsx
+@PropSerialize('scores')
+serializeScores(value: Map<string, number>) {
+  return Build.isServer ? devalue.stringify(value) : null;
+}
+
+@AttrDeserialize('scores')
+deserializeScores(value: string) {
+  return devalue.parse(value);
+}
+```
+
+It's the component author's job, once, and the format is theirs. It's the same mechanism for every
+framework, for values set in `beforeSsr` or by the React output target's wrappers (so Next.js
+needs no extra code), and for the `ssr-wasm` output target. If an object prop set on the server
+has no serializer, `renderToString()` adds a warning to its `diagnostics`: the browser won't get
+it, so the component would first render there without it.
 
 ## Running it
 
@@ -88,7 +115,7 @@ Requirements: Node 22+ (SolidStart wants 24), pnpm 9.
 
 ```sh
 pnpm install
-pnpm build                      # packages/*: components, React wrappers, ssr-props
+pnpm build                      # packages/*: components, React wrappers
 scripts/test-all.sh             # build + start + test every example (production servers)
 DEV=1 scripts/test-all.sh nuxt  # one example, against its dev server
 
@@ -99,8 +126,9 @@ BASE_URL=http://localhost:3002 pnpm test
 
 ### Local Stencil checkouts
 
-Several examples depend on fixes that aren't released yet. The root `package.json` points the
-workspace at local checkouts through pnpm overrides:
+The examples use the published `@stencil/core` and `@stencil/react-output-target`. To try
+changes to either, point the workspace at a local checkout (a pnpm override in the root
+`package.json`):
 
 ```sh
 pnpm link:core     # @stencil/core <- ../../stenciljs/packages/core (or $STENCIL_CORE_PATH)
@@ -117,7 +145,6 @@ target.
 ```
 packages/components/        the Stencil library: loader-bundle, standalone, ssr, React wrappers
 packages/components-react/  generated React wrappers (Next.js imports `/next`)
-packages/ssr-props/         ssrProp() + ssrPropsOptions(): complex props from templates
 packages/demo-data/         the data every page renders
 examples/<framework>/       one app per framework, each with a README
 tests/conformance/          the suite every example passes (CONTRACT.md)
@@ -151,7 +178,7 @@ tests/conformance/          the suite every example passes (CONTRACT.md)
 
 ## Found along the way
 
-Stencil core fixes (local branch `fix/ssr-framework-integration` in `stenciljs`):
+Stencil core fixes (in `@stencil/core` 5.0.0-beta.36):
 
 - A standalone `defineCustomElement()` threw `customElements is not defined` on the server,
   which broke every Next.js build.
@@ -163,9 +190,13 @@ Stencil core fixes (local branch `fix/ssr-framework-integration` in `stenciljs`)
 - Client hydration could take a framework's slotted text for a missing text node of the
   component's own, and overwrite it.
 - The `ssr` output's `.d.ts` imported `rolldown`, `typescript` and `@stencil/core/app-data`.
-- New: the `transferProps` render option (above).
+- `@PropSerialize()` didn't run on the server for values set before the component upgraded
+  (`beforeSsr`, wrappers), so they never reached the browser.
+- New: `ssrProp()` (`./ssr-prop`), `@Prop({ serialize: 'json' })`, and a warning when an object
+  prop can't reach the browser.
+- `@Prop({ attribute: null })` didn't remove the attribute.
 
-React output target fixes (branch `fix/react-ssr-v5-fragments` in `output-targets`):
+React output target fixes (in `@stencil/react-output-target` 1.8.1):
 attribute escaping, and reading v5 fragments structurally instead of by line number, which
 fixed duplicated components and lost whitespace.
 
@@ -175,6 +206,7 @@ Framework notes worth knowing before you start are in each example's README. The
   light DOM patches. Reactive text slotted into a `scoped` or unencapsulated component can't
   hydrate there, so use `shadow` for components that take framework-reactive slot content.
 - **React 19** doesn't set properties or attach event listeners on custom elements it hydrates,
-  only on later updates. The React Router example uses a ref for events; `s-props` covers props.
+  only on later updates. The React Router example uses a ref for events; the components' own
+  serializers cover props.
 - **Angular**'s server DOM sets `[prop]` bindings as properties, which never reach the HTML. Use
   `[attr.x]` for anything Stencil should see on the server.

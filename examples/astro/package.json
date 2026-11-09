@@ -11,7 +11,6 @@
     "@astrojs/node": "^11.1.11",
     "@ssr-examples/components": "workspace:*",
     "@ssr-examples/demo-data": "workspace:*",
-    "@ssr-examples/ssr-props": "workspace:*",
     "astro": "^7.4.7"
   }
 }

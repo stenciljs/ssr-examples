@@ -29,8 +29,11 @@ BASE_URL=http://localhost:3003 pnpm test
 // src/middleware.ts
 export const onRequest = defineMiddleware(async (_context, next) => {
   const response = await next();
-  if (!response.headers.get('content-type')?.includes('text/html')) return response;
-  const { html } = await renderToString(await response.text(), { reuseWindow: true, ...ssrPropsOptions() });
+  if (!response.headers.get('content-type')?.includes('text/html')) {
+    return response;
+  }
+  const { html, diagnostics } = await renderToString(await response.text(), { reuseWindow: true });
+  for (const d of diagnostics) console.warn('[stencil]', d.messageText);
   const headers = new Headers(response.headers);
   headers.delete('content-length');
   return new Response(html, { status: response.status, statusText: response.statusText, headers });
@@ -64,20 +67,22 @@ doesn't come up, and nothing needs to await `defineCustomElements()`.
 
 ## Complex props
 
-`demo-stats` takes an array property. In the template:
+`demo-task-list` and `demo-stats` take array properties. In the template:
 
 ```astro
+<demo-task-list tasks={ssrProp(tasks)}></demo-task-list>
 <demo-stats stats={ssrProp(stats)}></demo-stats>
 ```
 
-The frontmatter only runs on the server, so `ssrProp()` always returns its token string, which
-Astro renders as an escaped attribute. `ssrPropsOptions()` turns it back into the property before
-Stencil renders. Stencil sends the value to the client in an `s-props` attribute and sets it
-before the component first renders, so `demo-stats` hydrates with it. (`s-props` is Stencil's
-`transferProps` render option, on by default. It's on a local `@stencil/core` branch, linked with
-`pnpm link:core`, and not in a published release yet.) After that, the client script owns the
-value: `#add-stat` sets `stats.stats = [...stats.stats, extraStat]`. See
-[`packages/ssr-props`](../../packages/ssr-props).
+`ssrProp()` comes from the component library (`@ssr-examples/components/ssr-prop`). The
+frontmatter only runs on the server, so it always keeps the array in a registry and returns a
+reference, which Astro renders as an escaped attribute. Stencil's SSR runtime, in the same
+process, swaps the reference for the array while it sets up the component. Each component then
+carries the value to the browser itself: `@Prop({ serialize: 'json' })` writes it to the component's attribute on the server, and reads it back before the component first renders, so
+both components hydrate with it. If an object prop is set on the server and the component has no serializer (`serialize: 'json'` or a `@PropSerialize()`), `renderToString()` adds a warning to `diagnostics`, which the middleware
+prints. (These need `@stencil/core` 5.0.0-beta.36 or later.)
+After that, the client script owns the value: `#add-stat` sets
+`stats.stats = [...stats.stats, extraStat]`. See [Complex props](../../README.md#complex-props).
 
 ## Things to know
 
@@ -89,7 +94,7 @@ value: `#add-stat` sets `stats.stats = [...stats.stats, extraStat]`. See
   Skip anything that isn't `text/html`; the same middleware also runs for `/health`.
 - **No framework hydration, no framework state on the client.** The notice and badge text are
   bound in the template (`{framework}`, `{badge}`), but only on the server. The client script
-  reads what it needs from the DOM (`demo-stats`'s `stats` property, set from `s-props`).
+  reads what it needs from the DOM (`demo-stats`'s `stats` property, read back from its attribute).
   If you add an island (`client:load`) that renders Stencil components, it hydrates like that
   framework does, and the components must be defined before the island hydrates.
 - **Global styles.** The page's `<style>` is `is:global`. A scoped Astro style adds a

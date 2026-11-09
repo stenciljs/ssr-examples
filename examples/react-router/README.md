@@ -35,14 +35,19 @@ const { pipe, abort } = renderToPipeableStream(<ServerRouter context={routerCont
   onAllReady() {
     const chunks: Buffer[] = [];
     const body = new PassThrough();
-    body.on('data', (chunk) => chunks.push(chunk));
+    body.on('data', (chunk: Buffer) => chunks.push(chunk));
+    body.on('error', reject);
     body.on('end', async () => {
-      const { html } = await renderToString(Buffer.concat(chunks).toString('utf8'), {
-        reuseWindow: true,
-        ...ssrPropsOptions(),
-      });
-      responseHeaders.set('Content-Type', 'text/html; charset=utf-8');
-      resolve(new Response(html, { headers: responseHeaders, status: responseStatusCode }));
+      clearTimeout(timeoutId);
+      timeoutId = undefined;
+      try {
+        const { html, diagnostics } = await renderToString(Buffer.concat(chunks).toString('utf8'), { reuseWindow: true });
+        for (const d of diagnostics) console.warn('[stencil]', d.messageText);
+        responseHeaders.set('Content-Type', 'text/html; charset=utf-8');
+        resolve(new Response(html, { headers: responseHeaders, status: responseStatusCode }));
+      } catch (error) {
+        reject(error);
+      }
     });
     pipe(body);
   },
@@ -84,21 +89,23 @@ before calling `hydrateRoot()`.
 
 ## Complex props
 
-`demo-stats` takes an array property. In JSX:
+`demo-task-list` and `demo-stats` take array properties. In JSX:
 
 ```tsx
+<demo-task-list suppressHydrationWarning tasks={ssrProp(tasks)} />
 <demo-stats suppressHydrationWarning stats={ssrProp(stats)} />
 ```
 
-On the server, `ssrProp()` returns a token string, which React renders as an attribute.
-`ssrPropsOptions()` turns it back into the property before Stencil renders, and Stencil sends the
-value to the client in an `s-props` attribute, which it sets before the component first renders.
-(`s-props` is Stencil's `transferProps` render option, on by default. It's on a local
-`@stencil/core` branch, linked with `pnpm link:core`, and not in a published release yet.) On the
-client, `ssrProp()` returns the array. React 19 sets the array as a property on elements it
-creates or updates, but **not on elements it hydrates**, so `s-props` is what gives `demo-stats`
-its data on the first render. Later updates (`#add-stat`) go through React normally. See
-[`packages/ssr-props`](../../packages/ssr-props).
+`ssrProp()` comes from the component library (`@ssr-examples/components/ssr-prop`). On the
+server it keeps the array in a registry and returns a reference, which React renders as an
+attribute. Stencil's SSR runtime, in the same process, swaps the reference for the array while
+it sets up the component. Each component then carries the value to the browser itself: `@Prop({ serialize: 'json' })` writes it to the component's attribute on the server, and reads it
+back before the component first renders. If an object prop is set on the server and the
+component has no serializer (`serialize: 'json'` or a `@PropSerialize()`), `renderToString()` adds a warning to `diagnostics`, which
+`entry.server.tsx` prints. (These need `@stencil/core` 5.0.0-beta.36 or later.) On the client, `ssrProp()` returns the array. React 19 sets the array as
+a property on elements it creates or updates, but **not on elements it hydrates**, so the
+component's own attribute is what gives both components their data on the first render. Later
+updates (`#add-stat`) go through React normally. See [Complex props](../../README.md#complex-props).
 
 ## Things to know
 

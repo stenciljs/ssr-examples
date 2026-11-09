@@ -3,7 +3,6 @@ import type { EntryContext } from 'react-router';
 import { ServerRouter } from 'react-router';
 import { renderToPipeableStream } from 'react-dom/server';
 import { renderToString } from '@ssr-examples/components/ssr';
-import { ssrPropsOptions } from '@ssr-examples/ssr-props/server';
 
 export const streamTimeout = 5_000;
 
@@ -33,10 +32,7 @@ export default function handleRequest(
           clearTimeout(timeoutId);
           timeoutId = undefined;
           try {
-            const { html, diagnostics } = await renderToString(Buffer.concat(chunks).toString('utf8'), {
-              reuseWindow: true,
-              ...ssrPropsOptions(),
-            });
+            const { html, diagnostics } = await renderToString(Buffer.concat(chunks).toString('utf8'), { reuseWindow: true });
             for (const d of diagnostics) console.warn('[stencil]', d.messageText);
             responseHeaders.set('Content-Type', 'text/html; charset=utf-8');
             resolve(new Response(html, { headers: responseHeaders, status: responseStatusCode }));

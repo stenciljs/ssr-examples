@@ -31,12 +31,15 @@ the same way.
 ```ts
 // src/server.ts
 async function renderStencil(response: Response): Promise<Response> {
-  if (!response.headers.get('content-type')?.includes('text/html')) return response;
+  if (!response.headers.get('content-type')?.includes('text/html')) {
+    return response;
+  }
   const page = await response.text();
-  const { html } = await renderToString(page, { reuseWindow: true, ...ssrPropsOptions() });
+  const { html, diagnostics } = await renderToString(page, { reuseWindow: true });
+  for (const d of diagnostics) console.warn('[stencil]', d.messageText);
   const headers = new Headers(response.headers);
   headers.delete('content-length');
-  return new Response(html || page, { status: response.status, headers });
+  return new Response(html || page, { status: response.status, statusText: response.statusText, headers });
 }
 
 app.use(async (req, res, next) => {
@@ -87,32 +90,38 @@ bindings stop working.
 
 ## Complex props
 
-`demo-stats` takes an array property. In the template:
+`demo-task-list` and `demo-stats` take array properties. In the template:
 
 ```html
-<demo-stats [attr.stats]="statsAttr()" [stats]="stats()"></demo-stats>
+<demo-task-list [attr.tasks]="ssrAttr(tasks)" [tasks]="tasks"></demo-task-list>
+<demo-stats [attr.stats]="ssrAttr(stats())" [stats]="stats()"></demo-stats>
 ```
 
 ```ts
 private readonly isServer = isPlatformServer(inject(PLATFORM_ID));
-protected readonly statsAttr = computed(() => (this.isServer ? ssrProp(this.stats()) : null));
+
+protected ssrAttr(value: unknown) {
+  return this.isServer ? ssrProp(value) : null;
+}
 ```
 
 Angular sets `[stats]` as a **property**, and its server DOM never serializes properties, so a
-`[stats]="ssrProp(stats())"` token would never reach the HTML. So the template binds both:
+`[stats]="ssrProp(stats())"` reference would never reach the HTML. So the template binds both:
 
-- On the server, `[attr.stats]` writes the `ssrProp()` token as an attribute, and
-  `ssrPropsOptions()` turns it back into the property before Stencil renders. Stencil sends the
-  value to the client in an `s-props` attribute and sets it before the component first renders.
-  (`s-props` is Stencil's `transferProps` render option, on by default. It's on a local
-  `@stencil/core` branch, linked with `pnpm link:core`, and not in a published release yet.)
-- On the client, `statsAttr()` is `null`, so Angular leaves the attribute off, and `[stats]` sets
-  the property as usual. Later updates (`#add-stat`) work normally.
+- On the server, `[attr.stats]` writes the `ssrProp()` reference (from
+  `@ssr-examples/components/ssr-prop`) as an attribute; `ssrProp()` keeps the array in a
+  registry, and Stencil's SSR runtime, in the same process, swaps the reference for the array
+  while it sets up the component. Each component then carries the value to the browser itself:
+  `@Prop({ serialize: 'json' })` writes it to the component's attribute on the server, and reads it back before the component first renders. If an object prop is set on the server and
+  the component has no serializer (`serialize: 'json'` or a `@PropSerialize()`), `renderToString()` adds a warning to `diagnostics`,
+  which `src/server.ts` prints. (These need `@stencil/core` 5.0.0-beta.36 or later.)
+- On the client, `ssrAttr()` returns `null`, so Angular leaves the attribute off, and `[stats]`
+  sets the property as usual. Later updates (`#add-stat`) work normally.
 
 Don't bind `[attr.stats]="ssrProp(stats())"` on its own: on the client `ssrProp()` returns the
 array, which Angular would write as the attribute `[object Object]`.
 
-See [`packages/ssr-props`](../../packages/ssr-props).
+See [Complex props](../../README.md#complex-props).
 
 ## Things to know
 

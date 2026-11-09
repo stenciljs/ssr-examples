@@ -6,8 +6,7 @@ export interface DemoStat {
 }
 
 /**
- * A complex (array of objects) prop with **no** attribute fallback: it can only be set as a
- * property. Used to show how each framework gets complex data into a component on the server.
+ * A complex (array of objects) prop, set by the framework and updated by it later.
  */
 @Component({
   tag: 'demo-stats',
@@ -15,8 +14,8 @@ export interface DemoStat {
   encapsulation: { type: 'shadow' },
 })
 export class DemoStats {
-  /** The bars to draw. Property only. */
-  @Prop() stats: DemoStat[] = [];
+  /** The bars to draw. `serialize` carries them from the server render to the browser, as JSON. */
+  @Prop({ serialize: 'json' }) stats: DemoStat[] = [];
 
   render() {
     const stats = this.stats ?? [];

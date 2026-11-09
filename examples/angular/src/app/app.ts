@@ -1,7 +1,7 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, PLATFORM_ID, inject, signal } from '@angular/core';
 import { isPlatformServer } from '@angular/common';
 import { extraStat, stats as initialStats, tasks } from '@ssr-examples/demo-data';
-import { ssrProp } from '@ssr-examples/ssr-props';
+import { ssrProp } from '@ssr-examples/components/ssr-prop';
 
 @Component({
   selector: 'app-root',

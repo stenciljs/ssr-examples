@@ -14,8 +14,8 @@ export interface DemoTask {
   encapsulation: { type: 'shadow' },
 })
 export class DemoTaskList {
-  /** The tasks. */
-  @Prop() tasks: DemoTask[] = [];
+  /** The tasks. `serialize` carries them from the server render to the browser, as JSON. */
+  @Prop({ serialize: 'json' }) tasks: DemoTask[] = [];
 
   render() {
     const tasks = this.tasks ?? [];

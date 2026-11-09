@@ -7,7 +7,6 @@
   },
   "dependencies": {
     "@ssr-examples/components": "workspace:*",
-    "@ssr-examples/ssr-props": "workspace:*",
     "@ssr-examples/demo-data": "workspace:*"
   }
 }

@@ -27,8 +27,11 @@ BASE_URL=http://localhost:3002 pnpm test
 // server/plugins/stencil-ssr.ts
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('render:response', async (response) => {
-    if (typeof response.body !== 'string' || !response.headers?.['content-type']?.includes('text/html')) return;
-    const { html } = await renderToString(response.body, { reuseWindow: true, ...ssrPropsOptions() });
+    if (typeof response.body !== 'string' || !response.headers?.['content-type']?.includes('text/html')) {
+      return;
+    }
+    const { html, diagnostics } = await renderToString(response.body, { reuseWindow: true });
+    for (const d of diagnostics) console.warn('[stencil]', d.messageText);
     if (html) response.body = html;
   });
 });
@@ -57,19 +60,23 @@ the elements.
 
 ## Complex props
 
-`demo-stats` takes an array property. In the template:
+`demo-task-list` and `demo-stats` take array properties. In the template:
 
 ```vue
+<demo-task-list :tasks="ssrProp(tasks)" />
 <demo-stats :stats="ssrProp(stats)" />
 ```
 
-On the server, `ssrProp()` turns the array into a token string that Vue renders as an
-attribute, and `ssrPropsOptions()` turns it back into the property before Stencil renders.
-Stencil sends the value to the client in an `s-props` attribute and sets it before the component
-first renders. On the client, `ssrProp()` returns the array unchanged, so Vue sets the property as
-usual, and later updates (`#add-stat`) work normally. (`s-props` is Stencil's `transferProps`
-render option, on by default. It's on a local `@stencil/core` branch, linked with
-`pnpm link:core`, and not in a published release yet.) See [`packages/ssr-props`](../../packages/ssr-props).
+`ssrProp()` comes from the component library (`@ssr-examples/components/ssr-prop`). On the
+server it keeps the array in a registry and returns a reference that Vue renders as an
+attribute, and Stencil's SSR runtime, in the same process, swaps the reference for the array
+while it sets up the component. Each component then carries the value to the browser itself:
+`@Prop({ serialize: 'json' })` writes it to the component's attribute on the server, and reads
+it back before the component first renders. On the client, `ssrProp()` returns the array
+unchanged, so Vue sets the property as usual, and later updates (`#add-stat`) work normally. If
+an object prop is set on the server and the component has no serializer (`serialize: 'json'` or a `@PropSerialize()`),
+`renderToString()` adds a warning to `diagnostics`, which the hook prints. (These need `@stencil/core` 5.0.0-beta.36 or later.) See
+[Complex props](../../README.md#complex-props).
 
 ## Things to know
 

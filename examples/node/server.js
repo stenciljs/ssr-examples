@@ -5,8 +5,7 @@ import { readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { renderToString } from '@ssr-examples/components/ssr';
-import { ssrProp } from '@ssr-examples/ssr-props';
-import { ssrPropsOptions } from '@ssr-examples/ssr-props/server';
+import { ssrProp } from '@ssr-examples/components/ssr-prop';
 import { stats, tasks } from '@ssr-examples/demo-data';
 
 const PORT = Number(process.env.PORT ?? 3000);
@@ -83,10 +82,7 @@ const server = createServer(async (req, res) => {
       }
     }
     if (url.pathname === '/') {
-      const { html, diagnostics } = await renderToString(page(), {
-        reuseWindow: true,
-        ...ssrPropsOptions(),
-      });
+      const { html, diagnostics } = await renderToString(page(), { reuseWindow: true });
       for (const d of diagnostics) console.warn(d.messageText);
       return res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }).end(html);
     }

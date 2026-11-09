@@ -48,28 +48,27 @@ from the library's `standalone` build as soon as the wrapper module loads, befor
 
 ## Complex props
 
-Nothing extra. The server wrappers set object and array props as properties before Stencil
-renders. Stencil then sends them to the client in an `s-props` attribute (its `transferProps`
-render option, on by default) and sets them before the component first renders. Without that,
-`demo-stats` would render empty on the client until the wrapper set the property after
-hydrating. (`transferProps` is on a local `@stencil/core` branch, linked with `pnpm link:core`,
-and not in a published release yet.)
+Nothing extra in the app, as long as the component carries the value itself. The server
+wrappers set object and array props as properties before Stencil renders. `demo-stats` declares
+`@Prop({ serialize: 'json' })`, so the value is written to its attribute on the server and read
+back in the browser before the component first renders. Without a serializer, `demo-stats` would
+render empty on the client until the wrapper set the property after hydrating, and the
+wrapper's `renderToString()` would add a warning to its `diagnostics`. (These need `@stencil/core` 5.0.0-beta.36 or later.)
 
 ## Things to know
 
 - **Each component renders separately.** Every wrapper makes its own `renderToString()` call,
   with `reuseWindow: true` so the SSR runtime is set up once, not per component. Nested Stencil
   components in a wrapper's children are serialized as plain tags and render themselves.
-- **React output target fixes this example needs**, on a local `@stencil/react-output-target`
-  branch installed with `pnpm link:react`:
+- **Needs `@stencil/react-output-target` 1.8.1 or later**, which fixed:
   - attribute values weren't escaped, so a string prop containing `"` broke the markup;
   - with Stencil v5, a shadow component with a scoped component slotted into it was emitted
     twice: v5 puts the scoped component's styles at the start of each fragment, and the wrapper
     found the component by line number in pretty-printed output;
   - light DOM components lost meaningful whitespace for the same reason: `demo-notice` rendered
     `Note:Rendered by …`, and on the client Stencil's hydration then took the slotted text for
-    the missing space and overwrote it. The wrapper now reads the unformatted output, and Stencil
-    no longer takes another node's text when an annotated one is missing.
+    the missing space and overwrote it. The fixed wrapper reads the unformatted output, and the
+    fixed Stencil core recreates a missing annotated text node instead of taking another's.
 - **Text next to dynamic values:** `Last count: {n}` renders as `Last count: <!-- -->5`, React's
   separator between adjacent text. That's harmless in the browser, but use one template literal
   where you want a single text node, as in light-DOM components.

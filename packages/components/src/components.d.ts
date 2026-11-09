@@ -62,12 +62,11 @@ export namespace Components {
         "kind": 'info' | 'error';
     }
     /**
-     * A complex (array of objects) prop with **no** attribute fallback: it can only be set as a
-     * property. Used to show how each framework gets complex data into a component on the server.
+     * A complex (array of objects) prop, set by the framework and updated by it later.
      */
     interface DemoStats {
         /**
-          * The bars to draw. Property only.
+          * The bars to draw. `serialize` carries them from the server render to the browser, as JSON.
           * @default []
          */
         "stats": DemoStat[];
@@ -77,7 +76,7 @@ export namespace Components {
      */
     interface DemoTaskList {
         /**
-          * The tasks.
+          * The tasks. `serialize` carries them from the server render to the browser, as JSON.
           * @default []
          */
         "tasks": DemoTask[];
@@ -139,8 +138,7 @@ declare global {
         new (): HTMLDemoNoticeElement;
     };
     /**
-     * A complex (array of objects) prop with **no** attribute fallback: it can only be set as a
-     * property. Used to show how each framework gets complex data into a component on the server.
+     * A complex (array of objects) prop, set by the framework and updated by it later.
      */
     interface HTMLDemoStatsElement extends Components.DemoStats, HTMLStencilElement {
     }
@@ -224,12 +222,11 @@ declare namespace LocalJSX {
         "kind"?: 'info' | 'error';
     }
     /**
-     * A complex (array of objects) prop with **no** attribute fallback: it can only be set as a
-     * property. Used to show how each framework gets complex data into a component on the server.
+     * A complex (array of objects) prop, set by the framework and updated by it later.
      */
     interface DemoStats {
         /**
-          * The bars to draw. Property only.
+          * The bars to draw. `serialize` carries them from the server render to the browser, as JSON.
           * @default []
          */
         "stats"?: DemoStat[];
@@ -239,7 +236,7 @@ declare namespace LocalJSX {
      */
     interface DemoTaskList {
         /**
-          * The tasks.
+          * The tasks. `serialize` carries them from the server render to the browser, as JSON.
           * @default []
          */
         "tasks"?: DemoTask[];
@@ -259,14 +256,20 @@ declare namespace LocalJSX {
     interface DemoNoticeAttributes {
         "kind": 'info' | 'error';
     }
+    interface DemoStatsAttributes {
+        "stats": string;
+    }
+    interface DemoTaskListAttributes {
+        "tasks": string;
+    }
 
     interface IntrinsicElements {
         "demo-badge": Omit<DemoBadge, keyof DemoBadgeAttributes> & { [K in keyof DemoBadge & keyof DemoBadgeAttributes]?: DemoBadge[K] } & { [K in keyof DemoBadge & keyof DemoBadgeAttributes as `attr:${K}`]?: DemoBadgeAttributes[K] } & { [K in keyof DemoBadge & keyof DemoBadgeAttributes as `prop:${K}`]?: DemoBadge[K] };
         "demo-card": Omit<DemoCard, keyof DemoCardAttributes> & { [K in keyof DemoCard & keyof DemoCardAttributes]?: DemoCard[K] } & { [K in keyof DemoCard & keyof DemoCardAttributes as `attr:${K}`]?: DemoCardAttributes[K] } & { [K in keyof DemoCard & keyof DemoCardAttributes as `prop:${K}`]?: DemoCard[K] };
         "demo-counter": Omit<DemoCounter, keyof DemoCounterAttributes> & { [K in keyof DemoCounter & keyof DemoCounterAttributes]?: DemoCounter[K] } & { [K in keyof DemoCounter & keyof DemoCounterAttributes as `attr:${K}`]?: DemoCounterAttributes[K] } & { [K in keyof DemoCounter & keyof DemoCounterAttributes as `prop:${K}`]?: DemoCounter[K] };
         "demo-notice": Omit<DemoNotice, keyof DemoNoticeAttributes> & { [K in keyof DemoNotice & keyof DemoNoticeAttributes]?: DemoNotice[K] } & { [K in keyof DemoNotice & keyof DemoNoticeAttributes as `attr:${K}`]?: DemoNoticeAttributes[K] } & { [K in keyof DemoNotice & keyof DemoNoticeAttributes as `prop:${K}`]?: DemoNotice[K] };
-        "demo-stats": DemoStats;
-        "demo-task-list": DemoTaskList;
+        "demo-stats": Omit<DemoStats, keyof DemoStatsAttributes> & { [K in keyof DemoStats & keyof DemoStatsAttributes]?: DemoStats[K] } & { [K in keyof DemoStats & keyof DemoStatsAttributes as `attr:${K}`]?: DemoStatsAttributes[K] } & { [K in keyof DemoStats & keyof DemoStatsAttributes as `prop:${K}`]?: DemoStats[K] };
+        "demo-task-list": Omit<DemoTaskList, keyof DemoTaskListAttributes> & { [K in keyof DemoTaskList & keyof DemoTaskListAttributes]?: DemoTaskList[K] } & { [K in keyof DemoTaskList & keyof DemoTaskListAttributes as `attr:${K}`]?: DemoTaskListAttributes[K] } & { [K in keyof DemoTaskList & keyof DemoTaskListAttributes as `prop:${K}`]?: DemoTaskList[K] };
     }
 }
 export { LocalJSX as JSX };
@@ -293,8 +296,7 @@ declare module "@stencil/core" {
              */
             "demo-notice": LocalJSX.IntrinsicElements["demo-notice"] & JSXBase.HTMLAttributes<HTMLDemoNoticeElement>;
             /**
-             * A complex (array of objects) prop with **no** attribute fallback: it can only be set as a
-             * property. Used to show how each framework gets complex data into a component on the server.
+             * A complex (array of objects) prop, set by the framework and updated by it later.
              */
             "demo-stats": LocalJSX.IntrinsicElements["demo-stats"] & JSXBase.HTMLAttributes<HTMLDemoStatsElement>;
             /**

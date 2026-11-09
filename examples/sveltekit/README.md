@@ -28,8 +28,11 @@ BASE_URL=http://localhost:3004 pnpm test
 // src/hooks.server.ts
 export const handle: Handle = async ({ event, resolve }) => {
   const response = await resolve(event);
-  if (!response.headers.get('content-type')?.includes('text/html')) return response;
-  const { html } = await renderToString(await response.text(), { reuseWindow: true, ...ssrPropsOptions() });
+  if (!response.headers.get('content-type')?.includes('text/html')) {
+    return response;
+  }
+  const { html, diagnostics } = await renderToString(await response.text(), { reuseWindow: true });
+  for (const d of diagnostics) console.warn('[stencil]', d.messageText);
   const headers = new Headers(response.headers);
   headers.delete('content-length');
   return new Response(html, { status: response.status, statusText: response.statusText, headers });
@@ -66,21 +69,25 @@ Vue's, and it needs the components defined for two reasons:
 
 ## Complex props
 
-`demo-stats` takes an array property. In the template:
+`demo-task-list` and `demo-stats` take array properties. In the template:
 
 ```svelte
+<demo-task-list tasks={ssrProp(tasks)}></demo-task-list>
 <demo-stats stats={ssrProp(stats)}></demo-stats>
 ```
 
-On the server, `ssrProp()` turns the array into a token string that Svelte renders as an
-attribute, and `ssrPropsOptions()` turns it back into the property before Stencil renders.
-Stencil sends the value to the client in an `s-props` attribute and sets it before the component
-first renders. That matters here: the components start rendering while SvelteKit loads the page's
-modules, before Svelte sets any property. On the client, `ssrProp()` returns the array unchanged,
-so Svelte then sets the property as usual, and later updates (`#add-stat`) work normally.
-(`s-props` is Stencil's `transferProps` render option, on by default. It's on a local
-`@stencil/core` branch, linked with `pnpm link:core`, and not in a published release yet.) See
-[`packages/ssr-props`](../../packages/ssr-props).
+`ssrProp()` comes from the component library (`@ssr-examples/components/ssr-prop`). On the
+server it keeps the array in a registry and returns a reference that Svelte renders as an
+attribute, and Stencil's SSR runtime, in the same process, swaps the reference for the array
+while it sets up the component. Each component then carries the value to the browser itself:
+`@Prop({ serialize: 'json' })` writes it to the component's attribute on the server, and reads
+it back before the component first renders. That matters here: the components start rendering
+while SvelteKit loads the page's modules, before Svelte sets any property. On the client,
+`ssrProp()` returns the array unchanged, so Svelte then sets the property as usual, and later
+updates (`#add-stat`) work normally. If an object prop is set on the server and the component
+has no serializer (`serialize: 'json'` or a `@PropSerialize()`), `renderToString()` adds a warning to `diagnostics`, which the hook
+prints. (These need `@stencil/core` 5.0.0-beta.36 or later.)
+See [Complex props](../../README.md#complex-props).
 
 ## Things to know
 

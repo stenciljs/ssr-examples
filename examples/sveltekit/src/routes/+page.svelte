@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { extraStat, stats as initialStats, tasks } from '@ssr-examples/demo-data';
-	import { ssrProp } from '@ssr-examples/ssr-props';
+	import { ssrProp } from '@ssr-examples/components/ssr-prop';
 
 	let framework = $state('SvelteKit');
 	let badge = $state('SSR');
@@ -25,7 +25,6 @@
 	<demo-counter start="5" step="2" oncountChanged={(e: CustomEvent<number>) => (lastCount = e.detail)}
 	></demo-counter>
 	<p id="last-count">Last count: {lastCount ?? 'none'}</p>
-	<!-- a JSON attribute on the server; on the client Svelte sets the property, so pass the array -->
 	<demo-task-list tasks={ssrProp(tasks)}></demo-task-list>
 	<demo-stats stats={ssrProp(stats)}></demo-stats>
 	<button id="add-stat" type="button" onclick={addStat}>Add stat</button>

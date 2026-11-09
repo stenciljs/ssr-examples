@@ -5,7 +5,6 @@ import {
   writeResponseToNodeResponse,
 } from '@angular/ssr/node';
 import { renderToString } from '@ssr-examples/components/ssr';
-import { ssrPropsOptions } from '@ssr-examples/ssr-props/server';
 import express from 'express';
 import { join } from 'node:path';
 
@@ -35,10 +34,7 @@ async function renderStencil(response: Response): Promise<Response> {
     return response;
   }
   const page = await response.text();
-  const { html, diagnostics } = await renderToString(page, {
-    reuseWindow: true,
-    ...ssrPropsOptions(),
-  });
+  const { html, diagnostics } = await renderToString(page, { reuseWindow: true });
   for (const d of diagnostics) console.warn('[stencil]', d.messageText);
   const headers = new Headers(response.headers);
   headers.delete('content-length');

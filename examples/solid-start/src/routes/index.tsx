@@ -1,6 +1,6 @@
 import { createSignal } from 'solid-js';
 import { extraStat, stats as initialStats, tasks } from '@ssr-examples/demo-data';
-import { ssrProp } from '@ssr-examples/ssr-props';
+import { ssrProp } from '@ssr-examples/components/ssr-prop';
 
 export default function Home() {
   const [framework] = createSignal('SolidStart');

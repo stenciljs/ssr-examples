@@ -31,8 +31,11 @@ BASE_URL=http://localhost:3005 pnpm test
 export default createMiddleware([
   async (event, next) => {
     const body = await next();
-    if (typeof body !== 'string' || !event.res.headers.get('content-type')?.includes('text/html')) return body;
-    const { html } = await renderToString(body, { reuseWindow: true, ...ssrPropsOptions() });
+    if (typeof body !== 'string' || !event.res.headers.get('content-type')?.includes('text/html')) {
+      return body;
+    }
+    const { html, diagnostics } = await renderToString(body, { reuseWindow: true });
+    for (const d of diagnostics) console.warn('[stencil]', d.messageText);
     return html ?? body;
   },
 ]);
@@ -75,20 +78,23 @@ and the route's error boundary throws the server-rendered page away.
 
 ## Complex props
 
-`demo-stats` takes an array property. In the template:
+`demo-task-list` and `demo-stats` take array properties. In the template:
 
 ```tsx
+<demo-task-list tasks={ssrProp(tasks)} />
 <demo-stats stats={ssrProp(stats())} />
 ```
 
-On the server, `ssrProp()` turns the array into a token string that Solid renders as an
-attribute, and `ssrPropsOptions()` turns it back into the property before Stencil renders.
-Stencil sends the value to the client in an `s-props` attribute and sets it before the component
-first renders. (`s-props` is Stencil's `transferProps` render option, on by default. It's on a
-local `@stencil/core` branch, linked with `pnpm link:core`, and not in a published release yet.)
-On the client, `ssrProp()` returns the array unchanged, and Solid sets it as a property (it does that for any
-attribute on a custom element), so later updates (`#add-stat`) work normally. See
-[`packages/ssr-props`](../../packages/ssr-props).
+`ssrProp()` comes from the component library (`@ssr-examples/components/ssr-prop`). On the
+server it keeps the array in a registry and returns a reference that Solid renders as an
+attribute, and Stencil's SSR runtime, in the same process, swaps the reference for the array
+while it sets up the component. Each component then carries the value to the browser itself:
+`@Prop({ serialize: 'json' })` writes it to the component's attribute on the server, and reads
+it back before the component first renders. If an object prop is set on the server and the
+component has no serializer (`serialize: 'json'` or a `@PropSerialize()`), `renderToString()` adds a warning to `diagnostics`, which
+the middleware prints. (These need `@stencil/core` 5.0.0-beta.36 or later.) On the client, `ssrProp()` returns the array unchanged, and Solid sets it as a property (it does
+that for any attribute on a custom element), so later updates (`#add-stat`) work normally. See
+[Complex props](../../README.md#complex-props).
 
 Don't write `prop:stats`: Solid's server renderer drops `prop:` bindings, so the server HTML
 gets no value and renders the empty state.
