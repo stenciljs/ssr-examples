@@ -7,10 +7,5 @@
     "build": "pnpm --filter './packages/**' build",
     "test": "pnpm --filter @ssr-examples/conformance test",
     "test:all": "scripts/test-all.sh"
-  },
-  "pnpm": {
-    "overrides": {
-      "@stencil/types-output-target": "file:node_modules/.local-packs/stencil-types-output-target-1.0.2-fded523fa0.tgz"
-    }
   }
 }
