@@ -14,10 +14,11 @@
     "@ssr-examples/demo-data": "workspace:*",
     "nuxt": "^4.6.4",
     "vue": "^3.5.45",
-    "vue-router": "^5.4.0"
+    "vue-router": "^5.4.0",
+    "@ssr-examples/components-vue": "workspace:*"
   },
   "devDependencies": {
-    "vue-tsc": "^3.1.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vue-tsc": "^3.3.14"
   }
 }

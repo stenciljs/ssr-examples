@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { extraStat, stats as initialStats, tasks } from '@ssr-examples/demo-data';
-import { ssrProp } from '@ssr-examples/components/ssr-prop';
+import { DemoBadge, DemoCard, DemoCounter, DemoNotice, DemoStats, DemoTaskList } from '@ssr-examples/components-vue';
 
 const framework = ref('Nuxt');
 const badge = ref('SSR');
@@ -13,17 +13,17 @@ const addStat = () => (stats.value = [...stats.value, extraStat]);
 <template>
   <main>
     <h1>Nuxt + Stencil SSR</h1>
-    <demo-notice kind="info">Rendered by {{ framework }}.</demo-notice>
-    <demo-card heading="Server-rendered card" variant="highlight">
+    <DemoNotice kind="info">Rendered by {{ framework }}.</DemoNotice>
+    <DemoCard heading="Server-rendered card" variant="highlight">
       <span slot="icon">★</span>
       <p>This card was rendered on the server as Declarative Shadow DOM.</p>
-      <demo-badge tone="success">{{ badge }}</demo-badge>
+      <DemoBadge tone="success">{{ badge }}</DemoBadge>
       <span slot="footer">Footer slot</span>
-    </demo-card>
-    <demo-counter :start="5" :step="2" @countChanged="lastCount = $event.detail" />
+    </DemoCard>
+    <DemoCounter :start="5" :step="2" @countChanged="lastCount = $event.detail" />
     <p id="last-count">Last count: {{ lastCount ?? 'none' }}</p>
-    <demo-task-list :tasks="ssrProp(tasks)" />
-    <demo-stats :stats="ssrProp(stats)" />
+    <DemoTaskList :tasks="tasks" />
+    <DemoStats :stats="stats" />
     <button id="add-stat" type="button" @click="addStat">Add stat</button>
     <button id="update-badge" type="button" @click="badge = 'Updated'">Update badge</button>
   </main>

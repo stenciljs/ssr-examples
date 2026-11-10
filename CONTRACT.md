@@ -20,6 +20,8 @@ All examples depend on the workspace packages:
 |---|---|
 | `@ssr-examples/components` | `./ssr` on the server (`renderToString`), `./loader` on the client (`defineCustomElements`), `./ssr-prop` in templates (`ssrProp`) |
 | `@ssr-examples/components-react` | Next.js only: React wrappers; `./next` is the server version |
+| `@ssr-examples/components-vue` | Nuxt only: Vue wrappers |
+| `@ssr-examples/components-angular` | Angular only: Angular wrappers |
 | `@ssr-examples/demo-data` | the data below |
 
 ## Routes

@@ -41,54 +41,46 @@ app.use(async (req, res, next) => {
 });
 ```
 
-## 2. Define the components before Angular hydrates
+## 2. Use the components
 
-Bootstrap once `defineCustomElements()` has finished ([`src/main.ts`](src/main.ts)):
-
-```ts
-import { defineCustomElements } from '@ssr-examples/components/loader';
-
-defineCustomElements()
-  .then(() => bootstrapApplication(App, appConfig))
-  .catch((err) => console.error(err));
-```
-
-Defined later, Angular finds Stencil's markup where it expects its own text nodes and fails to
-bootstrap, so events and bindings stop working. (`ngSkipHydration` hides this only by
-re-rendering the components.)
-
-## 3. Use the components
-
-Add `CUSTOM_ELEMENTS_SCHEMA` to the component, then use them in the template
-([`src/app/app.ts`](src/app/app.ts)):
+Use the library's Angular wrappers, `@ssr-examples/components-angular`, like any standalone
+component ([`src/app/app.ts`](src/app/app.ts)):
 
 ```ts
-import { ssrProp } from '@ssr-examples/components/ssr-prop';
+import { DemoCounter, DemoStats } from '@ssr-examples/components-angular';
 
 @Component({
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [DemoCounter, DemoStats],
   template: `
-    <demo-counter start="5" step="2" (countChanged)="lastCount.set($event.detail)"></demo-counter>
-    <demo-stats [attr.stats]="ssrAttr(stats())" [stats]="stats()"></demo-stats>
+    <demo-counter [start]="5" [step]="2" (countChanged)="lastCount.set($event.detail)"></demo-counter>
+    <demo-stats [stats]="stats()"></demo-stats>
   `,
 })
-export class App {
-  private readonly isServer = isPlatformServer(inject(PLATFORM_ID));
-
-  protected ssrAttr(value: unknown) {
-    return this.isServer ? ssrProp(value) : null;
-  }
-}
+export class App {}
 ```
 
-- **Objects and arrays:** Angular's server render drops `[stats]` property bindings, so bind
-  `[attr.stats]` to `ssrProp()` on the server (`ssrAttr()` returns `null` in the browser, leaving
-  the attribute off), plus `[stats]` for the browser. Don't bind `[attr.stats]="ssrProp(...)"`
-  alone: in the browser it writes `[object Object]`. See
-  [Passing objects and arrays](../../README.md#passing-objects-and-arrays).
+- **Defining the components:** each wrapper defines its element when it loads, so before Angular
+  hydrates. Nothing to call in [`src/main.ts`](src/main.ts).
+- **Objects and arrays:** bind them like any input. On the server, the wrappers hand them to
+  `renderToString()` through `ssrProp()` (the library sets this up, see below).
 - **Events:** `(countChanged)` listens for `countChanged`, exactly as written.
 - **Render mode:** Angular prerenders at build time by default, and a prerendered file served
   directly (CDN, static hosting) has no Stencil markup. Use `RenderMode.Server`
   ([`src/app/app.config.server.ts`](src/app/app.config.server.ts)).
 - **Allowed hosts:** Angular answers requests for unlisted hosts with `400`. Add yours to
   `security.allowedHosts` in [`angular.json`](angular.json).
+
+## For the library author
+
+The wrappers come from the Angular output target. Angular's server DOM never writes properties
+to the HTML, so set `ssrPropModule`: on the server, the wrappers then write their inputs as
+attributes ([`packages/components/stencil.config.ts`](../../packages/components/stencil.config.ts)):
+
+```ts
+angularOutputTarget({
+  componentCorePackage: '@ssr-examples/components',
+  directivesProxyFile: '../components-angular/src/components.ts',
+  outputType: 'standalone',
+  ssrPropModule: '@ssr-examples/components/ssr-prop',
+}),
+```

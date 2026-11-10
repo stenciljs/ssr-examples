@@ -114,6 +114,11 @@ is type-checked. Each app imports its file once (as these examples do), so add t
 frameworks as optional `peerDependencies` of the library. Otherwise the types can't resolve
 them and quietly check nothing.
 
+**Vue and Angular wrappers:** set the output target's `ssrPropModule` to your `ssr-prop` module.
+Neither framework's server render writes objects (or, in Angular, any property) into the HTML,
+so without it the wrappers' props never reach `renderToString()`. See
+[`examples/nuxt`](examples/nuxt) and [`examples/angular`](examples/angular).
+
 **Slots, if your users use Svelte:** Svelte 5 can't hydrate slotted content that can change in a
 `scoped` or unencapsulated component, so use `shadow` encapsulation for components that take
 it. See [`examples/sveltekit`](examples/sveltekit).
@@ -126,7 +131,7 @@ Needs Node 22+ (24 for SolidStart) and pnpm 9.
 
 ```sh
 pnpm install
-pnpm build                       # the component library and its React wrappers
+pnpm build                       # the component library and its React, Vue and Angular wrappers
 scripts/test-all.sh              # build, start and test every example
 DEV=1 scripts/test-all.sh nuxt   # one example, on its dev server
 node scripts/screenshots.mjs     # the README screenshots (build first)

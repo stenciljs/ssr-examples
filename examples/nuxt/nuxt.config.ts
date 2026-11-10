@@ -1,12 +1,6 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: false },
-  vue: {
-    compilerOptions: {
-      // Stencil components are custom elements, not Vue components
-      isCustomElement: (tag) => tag.startsWith('demo-'),
-    },
-  },
   app: {
     head: {
       title: 'Nuxt · Stencil SSR',

@@ -31,50 +31,83 @@ export default defineNitroPlugin((nitroApp) => {
 });
 ```
 
-## 2. Define the components before Vue hydrates
+## 2. Use the components
 
-A `.client` plugin runs before hydration, and Nuxt waits for an async one
-([`app/plugins/stencil.client.ts`](app/plugins/stencil.client.ts)):
-
-```ts
-import { defineCustomElements } from '@ssr-examples/components/loader';
-
-export default defineNuxtPlugin(async () => {
-  await defineCustomElements();
-});
-```
-
-Don't define them later, such as in `onMounted`: Vue would report hydration mismatches and
-re-render the components.
-
-## 3. Use the components
-
-Tell Vue they're custom elements ([`nuxt.config.ts`](nuxt.config.ts)):
-
-```ts
-vue: {
-  compilerOptions: {
-    isCustomElement: (tag) => tag.startsWith('demo-'),
-  },
-},
-```
-
-Import the types the library generates for Vue
-([`app/custom-elements.d.ts`](app/custom-elements.d.ts)), then use them like any element
+Use the library's Vue wrappers, `@ssr-examples/components-vue`, like any Vue component
 ([`app/app.vue`](app/app.vue)):
 
 ```vue
 <script setup lang="ts">
-import { ssrProp } from '@ssr-examples/components/ssr-prop';
+import { DemoCounter, DemoStats } from '@ssr-examples/components-vue';
 </script>
 
 <template>
-  <demo-counter :start="5" :step="2" @countChanged="lastCount = $event.detail" />
-  <demo-stats :stats="ssrProp(stats)" />
+  <DemoCounter :start="5" :step="2" @countChanged="lastCount = $event.detail" />
+  <DemoStats :stats="stats" />
 </template>
 ```
 
-- **Objects and arrays:** wrap them in `ssrProp()`, or Vue leaves them out of the server HTML.
-  In the browser it returns the value as it is. See
-  [Passing objects and arrays](../../README.md#passing-objects-and-arrays).
+- **Defining the components:** each wrapper defines its element when it's imported, so before
+  Vue hydrates. Nothing else to set up.
+- **Objects and arrays:** bind them like any prop. On the server, the wrappers hand them to
+  `renderToString()` through `ssrProp()` (the library sets this up, see below).
 - **Events:** `@countChanged` listens for `countChanged`, exactly as written.
+
+## Without the wrappers
+
+The wrappers are optional: the components also work as plain custom elements, with no Vue output
+target. Then:
+
+1. Tell Vue they're custom elements, in [`nuxt.config.ts`](nuxt.config.ts):
+
+   ```ts
+   vue: { compilerOptions: { isCustomElement: (tag) => tag.startsWith('demo-') } },
+   ```
+
+2. Define them before Vue hydrates, in a `.client` plugin (Nuxt waits for an async one):
+
+   ```ts
+   // app/plugins/stencil.client.ts
+   import { defineCustomElements } from '@ssr-examples/components/loader';
+
+   export default defineNuxtPlugin(async () => {
+     await defineCustomElements();
+   });
+   ```
+
+3. Wrap objects and arrays in `ssrProp()`, or Vue leaves them out of the server HTML:
+
+   ```vue
+   <script setup lang="ts">
+   import { ssrProp } from '@ssr-examples/components/ssr-prop';
+   </script>
+
+   <template>
+     <demo-counter :start="5" :step="2" @countChanged="lastCount = $event.detail" />
+     <demo-stats :stats="ssrProp(stats)" />
+   </template>
+   ```
+
+For type-checked templates, import the types the library generates for Vue (from the
+[types output target](https://www.npmjs.com/package/@stencil/types-output-target)) once:
+
+```ts
+// app/custom-elements.d.ts
+import '@ssr-examples/components/vue-native-types';
+```
+
+## For the library author
+
+The wrappers come from the Vue output target. Vue's server renderer drops objects, and writes
+props under the names they're bound with (`firstName` would reach the HTML as `firstname`), so set
+`ssrPropModule`: on the server, the wrappers then write each prop under its attribute name
+([`packages/components/stencil.config.ts`](../../packages/components/stencil.config.ts)):
+
+```ts
+vueOutputTarget({
+  componentCorePackage: '@ssr-examples/components',
+  proxiesFile: '../components-vue/src/components.ts',
+  includeImportCustomElements: true,
+  ssrPropModule: '@ssr-examples/components/ssr-prop',
+}),
+```
